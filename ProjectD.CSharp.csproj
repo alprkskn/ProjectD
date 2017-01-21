@@ -97,6 +97,7 @@
     <Compile Include="Assets\Pathfinding\Scripts\WaypointListNode.cs" />
     <Compile Include="Assets\Pathfinding\Scripts\WaypointNode.cs" />
     <Compile Include="Assets\Pathfinding\Scripts\WaypointPathfinder.cs" />
+    <Compile Include="Assets\ProjectD\Scripts\Agent.cs" />
     <Compile Include="Assets\Tiled2Unity\Scripts\Runtime\ImportBehaviour.cs" />
     <Compile Include="Assets\Tiled2Unity\Scripts\Runtime\SortingLayerExposed.cs" />
     <Compile Include="Assets\Tiled2Unity\Scripts\Runtime\SpriteDepthInMap.cs" />

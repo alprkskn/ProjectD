@@ -4,7 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 
-public class Pathfinder2D : MonoBehaviour 
+public class Pathfinder2D : MonoBehaviour
 {
     //Singleton
     private static Pathfinder2D instance;
@@ -125,37 +125,28 @@ public class Pathfinder2D : MonoBehaviour
 
                 float dist = 20;
 
-                RaycastHit[] hit = Physics.SphereCastAll(new Vector3(x, y, zStart), Tilesize / 4, Vector3.forward, dist);
-                bool free = true;
-                float maxZ = Mathf.Infinity;
-
-                foreach (RaycastHit h in hit)
+                int layerMask = 0;
+                foreach (var l in DisallowedTags)
                 {
-                    if (DisallowedTags.Contains(h.transform.tag))
-                    {
-                        if (h.point.z < maxZ)
-                        {
-                            //It is a disallowed walking tile, make it false
-                            Map[j, i] = new Node(j, i, y, ID, x, 0, false); //Non walkable tile!
-                            free = false;
-                            maxZ = h.point.z;
-                        }
-                    }
-                    else if (IgnoreTags.Contains(h.transform.tag))
-                    {
-                        //Do nothing we ignore these tags
-                    }
-                    else
-                    {
-                        if (h.point.z < maxZ)
-                        {
-                            //It is allowed to walk on this tile, make it walkable!
-                            Map[j, i] = new Node(j, i, y, ID, x, h.point.z, true); //walkable tile!
-                            free = false;
-                            maxZ = h.point.z;
-                        }
-                    }
+                    layerMask |= 1 << LayerMask.NameToLayer(l);
                 }
+
+                var col = Physics2D.OverlapPoint(new Vector2(x, y), layerMask);
+
+                bool free = true;
+
+                if (col != null)
+                {
+                    Map[j, i] = new Node(j, i, y, ID, x, 0, false); //Non walkable tile!
+                    free = false;
+                }
+                else
+                {
+                    //It is allowed to walk on this tile, make it walkable!
+                    Map[j, i] = new Node(j, i, y, ID, x, 0, true); //walkable tile!
+                    free = false;
+                }
+
                 //We hit nothing set tile to false
                 if (free == true)
                 {
