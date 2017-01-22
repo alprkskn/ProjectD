@@ -6,7 +6,7 @@ public class Pathfinding2D : MonoBehaviour
 {
     public List<Vector3> Path = new List<Vector3>();
     public bool JS = false;
-
+    public float baseSpeed = 30f;
     public void FindPath(Vector3 startPosition, Vector3 endPosition)
     {
         Pathfinder2D.Instance.InsertInQueue(startPosition, endPosition, SetList);
@@ -21,11 +21,13 @@ public class Pathfinding2D : MonoBehaviour
     }
 
     //A test move function, can easily be replaced
-    public void Move()
+    public virtual void Move(float speed)
     {
         if (Path.Count > 0)
         {
-            transform.position = Vector3.MoveTowards(transform.position, Path[0], Time.deltaTime * 30F);
+            var next = Path[0];
+            next.z = transform.position.z;
+            transform.position = Vector3.MoveTowards(transform.position, next, Time.deltaTime * speed);
             if (Vector3.Distance(transform.position, Path[0]) < 0.4F)
             {
                 Path.RemoveAt(0);

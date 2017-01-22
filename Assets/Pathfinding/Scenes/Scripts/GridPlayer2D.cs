@@ -9,7 +9,7 @@ public class GridPlayer2D : Pathfinding2D
         FindPath();
         if (Path.Count > 0)
         {
-            Move();
+            Move(30f);
         }
     }
 

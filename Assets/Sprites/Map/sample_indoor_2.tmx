@@ -158,14 +158,4 @@
    eJzt1U1Kw0AYBuBJvUQRLHTlFfQm9ggue4UuLXgD0VWvYaGg4AnsuhfplEYacCaTYKSLPg+8fPMbhkAyIQAAAMBvd1UIL7F+hWMNjVqyq451FvMw+Mku07x+p1fVaex2dGq/ZeqPm5hJHf5uUZjfZuoysfZ5kBPRxWqUHt/EPFbpOforfR9dXMeMB3gO3bw3wv96LfQPPmI+Y+7r/9JTZn1qL/18F/oH60ba9qf2AnB5cveze/s8mvfzNDMOAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAbfYkoh2w
   </data>
  </layer>
- <layer name="Details" width="100" height="100">
-  <data encoding="base64" compression="zlib">
-   eJzt1UEKgCAQBVArOkWrDtglOnmrQGGoNsoE74E4upL5qKUAAABAbJvimfH2ta3rwXhPGdTrY4736e/u95e+n0vfs9ByF/Lwn+Qjk3zkAO+8WfnIJCeZAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAwP9cTZkFcQ==
-  </data>
- </layer>
- <objectgroup name="Object Layer 1">
-  <object id="4" x="380.667" y="191.333">
-   <polygon points="0,0 -145.333,-14.6667 -108,73.3333 51.3333,38 58,-11.3333 12.6667,-37.3333 -35.3333,-44.6667 -95.3333,-44 -172,-50 -188.667,-43.3333"/>
-  </object>
- </objectgroup>
 </map>

@@ -310,6 +310,12 @@ public class Pathfinder2D : MonoBehaviour
         endNode = FindClosestNode(end);
     }
 
+    public Vector2 FindClosestNodePos(Vector3 pos)
+    {
+        var nod = FindClosestNode(pos);
+        return new Vector2(nod.xCoord, nod.yCoord);
+    }
+
     private Node FindClosestNode(Vector3 pos)
     {
         int x = (MapStartPosition.x < 0F) ? Mathf.FloorToInt(((pos.x + Mathf.Abs(MapStartPosition.x)) / Tilesize)) : Mathf.FloorToInt((pos.x - MapStartPosition.x) / Tilesize);
