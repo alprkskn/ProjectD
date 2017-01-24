@@ -100,6 +100,7 @@
     <Compile Include="Assets\Pathfinding\Scripts\WaypointPathfinder.cs" />
     <Compile Include="Assets\ProjectD\Scripts\Agent.cs" />
     <Compile Include="Assets\ProjectD\Scripts\GOExtensions.cs" />
+    <Compile Include="Assets\ProjectD\Scripts\GridUtils.cs" />
     <Compile Include="Assets\ProjectD\Scripts\LevelLoader.cs" />
     <Compile Include="Assets\ProjectD\Scripts\RPGCharController.cs" />
     <Compile Include="Assets\ProjectD\Scripts\WarpPoint.cs" />

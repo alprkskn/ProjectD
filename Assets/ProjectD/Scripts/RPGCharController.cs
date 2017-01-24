@@ -19,6 +19,11 @@ public class RPGCharController : MonoBehaviour
 		}
 	}
 
+    public void ResetTarget()
+    {
+        _target = null;
+    }
+
 	// Use this for initialization
 	void Start()
 	{

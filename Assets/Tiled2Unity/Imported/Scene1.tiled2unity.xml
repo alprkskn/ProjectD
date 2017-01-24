@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <!--Tiled2Unity generated xml data-->
 <!--Do not modify by hand-->
-<!--Last exported: 24.1.2017 19:30:14-->
+<!--Last exported: 24.1.2017 20:35:03-->
 <Tiled2Unity version="1.0.9.4">
   <AssignMaterial mesh="mesh_0001" material="roguelikeSheet_transparent" />
   <AssignMaterial mesh="mesh_0002" material="roguelikeSheet_transparent" />
@@ -16,6 +16,11 @@
       <GameObject name="Scene2" x="409" y="-225" rotation="0" layer="">
         <Property name="Teleport" value="Scene2" />
         <BoxCollider2D width="8" height="62" />
+      </GameObject>
+    </GameObject>
+    <GameObject name="Entry" x="0" y="0" z="0">
+      <GameObject name="Scene2" x="352" y="-224" rotation="0" layer="">
+        <BoxCollider2D width="32" height="32" />
       </GameObject>
     </GameObject>
   </Prefab>
