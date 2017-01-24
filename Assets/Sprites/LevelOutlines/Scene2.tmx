@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" renderorder="left-down" width="30" height="20" tilewidth="32" tileheight="32" nextobjectid="1">
+<map version="1.0" orientation="orthogonal" renderorder="left-down" width="30" height="20" tilewidth="32" tileheight="32" nextobjectid="3">
  <tileset firstgid="1" name="roguelikeSheet_transparent" tilewidth="32" tileheight="32" spacing="2" tilecount="1767" columns="57">
   <image source="../Spritesheet/roguelikeSheet_transparent.png" width="1936" height="1052"/>
  </tileset>
@@ -8,6 +8,10 @@
    eJw7wsTAcIgMfBSIKQF/gPoLmUnHf0btJdleNxYGBncSsAcLdeytB5rTQAJuHLV3yNgLAiPJ3tFwJs5eSgG54UwNe3cAzdlJAt5FhXD+S2b9+48K8TsKaA8ADuqRYQ==
   </data>
  </layer>
+ <objectgroup name="Spawn">
+  <object id="1" name="Scene3" x="472" y="415" width="9" height="64"/>
+  <object id="2" name="Scene1" x="0" y="289" width="9" height="64"/>
+ </objectgroup>
  <layer name="Objects" width="30" height="20">
   <data encoding="base64" compression="zlib">
    eJxjYBg8YBkbAsOANisEDwd70e3ABmD2EqOWHHuR/YrNDmrai81cXPbSwi56A1LsHQpuHLUX06yBsHckAvRygh7lBiF7R+N0FJAKAFfTJL0=

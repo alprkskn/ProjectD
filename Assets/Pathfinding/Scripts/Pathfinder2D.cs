@@ -97,7 +97,7 @@ public class Pathfinder2D : MonoBehaviour
     #region map
     //-------------------------------------------------INSTANIATE MAP-----------------------------------------------//
 
-    private void Create2DMap()
+    public void Create2DMap()
     {
         //Find positions for start and end of map
         int startX = (int)MapStartPosition.x;

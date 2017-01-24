@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" renderorder="left-down" width="30" height="20" tilewidth="32" tileheight="32" nextobjectid="1">
+<map version="1.0" orientation="orthogonal" renderorder="left-down" width="30" height="20" tilewidth="32" tileheight="32" nextobjectid="2">
  <tileset firstgid="1" name="roguelikeSheet_transparent" tilewidth="32" tileheight="32" spacing="2" tilecount="1767" columns="57">
   <image source="../Spritesheet/roguelikeSheet_transparent.png" width="1936" height="1052"/>
  </tileset>
@@ -13,4 +13,11 @@
    eJxjYBg8YBkbAg+kvbRyA7q5A2Evsp309i9MDJs6WtuLS90oIB9gS0vI4qNgFIyCUTCSAQD92hgx
   </data>
  </layer>
+ <objectgroup name="Spawn">
+  <object id="1" name="Scene2" x="409" y="225" width="8" height="62">
+   <properties>
+    <property name="Teleport" value="Scene2"/>
+   </properties>
+  </object>
+ </objectgroup>
 </map>

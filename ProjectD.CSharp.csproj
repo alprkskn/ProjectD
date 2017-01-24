@@ -99,6 +99,10 @@
     <Compile Include="Assets\Pathfinding\Scripts\WaypointNode.cs" />
     <Compile Include="Assets\Pathfinding\Scripts\WaypointPathfinder.cs" />
     <Compile Include="Assets\ProjectD\Scripts\Agent.cs" />
+    <Compile Include="Assets\ProjectD\Scripts\GOExtensions.cs" />
+    <Compile Include="Assets\ProjectD\Scripts\LevelLoader.cs" />
+    <Compile Include="Assets\ProjectD\Scripts\RPGCharController.cs" />
+    <Compile Include="Assets\ProjectD\Scripts\WarpPoint.cs" />
     <Compile Include="Assets\Tiled2Unity\Scripts\Runtime\ImportBehaviour.cs" />
     <Compile Include="Assets\Tiled2Unity\Scripts\Runtime\SortingLayerExposed.cs" />
     <Compile Include="Assets\Tiled2Unity\Scripts\Runtime\SpriteDepthInMap.cs" />
@@ -109,6 +113,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\Sprites\Spritesheet\spritesheetInfo.txt" />
+    <None Include="Assets\Tiled2Unity\Imported\Scene1.tiled2unity.xml" />
+    <None Include="Assets\Tiled2Unity\Imported\Scene2.tiled2unity.xml" />
     <None Include="Assets\Tiled2Unity\Imported\_ReadMe.txt" />
     <None Include="Assets\Tiled2Unity\Imported\hex-flat.tiled2unity.xml" />
     <None Include="Assets\Tiled2Unity\Imported\sample_indoor.tiled2unity.xml" />
