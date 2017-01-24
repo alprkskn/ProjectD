@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" renderorder="left-down" width="30" height="20" tilewidth="32" tileheight="32" nextobjectid="1">
+ <tileset firstgid="1" name="roguelikeSheet_transparent" tilewidth="32" tileheight="32" spacing="2" tilecount="1767" columns="57">
+  <image source="../Spritesheet/roguelikeSheet_transparent.png" width="1936" height="1052"/>
+ </tileset>
+ <layer name="Tile Layer 1" width="30" height="20">
+  <data encoding="base64" compression="zlib">
+   eJw7wsTAcIgEfBSIqQH+AM0pZCYe/xm1l2x73VgYGNyJwB4s1LW3HmheAxG4cQTaSy0wkPaCwE4WwngXFcP5L4nl1T8q2TsKRsEoGAWkAgChyVSF
+  </data>
+ </layer>
+ <layer name="DummyObjects" width="30" height="20">
+  <data encoding="base64" compression="zlib">
+   eJxjYBg8YBkbAg+kvbRyA7q5A2Evsp309i9MDJs6WtuLS90oIB9gS0vI4qNgFIyCUTCSAQD92hgx
+  </data>
+ </layer>
+</map>

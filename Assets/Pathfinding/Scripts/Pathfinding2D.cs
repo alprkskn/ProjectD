@@ -28,7 +28,7 @@ public class Pathfinding2D : MonoBehaviour
             var next = Path[0];
             next.z = transform.position.z;
             transform.position = Vector3.MoveTowards(transform.position, next, Time.deltaTime * speed);
-            if (Vector3.Distance(transform.position, Path[0]) < 0.4F)
+            if (Vector2.Distance(transform.position, Path[0]) < 0.4F)
             {
                 Path.RemoveAt(0);
             }
