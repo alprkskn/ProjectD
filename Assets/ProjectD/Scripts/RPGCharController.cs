@@ -6,7 +6,7 @@ public class RPGCharController : MonoBehaviour
 	private Vector3? _target;
 	private bool _running;
 	private Transform _transform;
-	private int tileSize = 32;
+	public int tileSize = 32;
 	public float runMultiplier;
 
 	public float baseSpeed;
