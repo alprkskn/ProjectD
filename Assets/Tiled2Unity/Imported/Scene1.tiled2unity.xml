@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <!--Tiled2Unity generated xml data-->
 <!--Do not modify by hand-->
-<!--Last exported: 24.1.2017 20:35:03-->
+<!--Last exported: 27.1.2017 20:02:05-->
 <Tiled2Unity version="1.0.9.4">
   <AssignMaterial mesh="mesh_0001" material="roguelikeSheet_transparent" />
   <AssignMaterial mesh="mesh_0002" material="roguelikeSheet_transparent" />
@@ -11,6 +11,32 @@
     </GameObject>
     <GameObject name="DummyObjects" x="0" y="0" z="0">
       <GameObject name="roguelikeSheet_transparent" copy="mesh_0002" sortingLayerName="" sortingOrder="1" opacity="1" />
+      <GameObject name="Collision">
+        <PolygonCollider2D>
+          <Path>352,-64 352,-160 288,-160 288,-64</Path>
+        </PolygonCollider2D>
+        <PolygonCollider2D>
+          <Path>256,-160 224,-160 192,-160 160,-32 256,-32</Path>
+        </PolygonCollider2D>
+        <PolygonCollider2D>
+          <Path>224,-192 192,-192 192,-160 224,-160</Path>
+        </PolygonCollider2D>
+        <PolygonCollider2D>
+          <Path>160,-128 192,-160 128,-160 128,-128</Path>
+        </PolygonCollider2D>
+        <PolygonCollider2D>
+          <Path>96,-96 96,-224 32,-224 32,-96</Path>
+        </PolygonCollider2D>
+        <PolygonCollider2D>
+          <Path>384,-160 384,-224 352,-224 352,-160</Path>
+        </PolygonCollider2D>
+        <PolygonCollider2D>
+          <Path>160,-288 160,-320 32,-320 32,-288</Path>
+        </PolygonCollider2D>
+        <PolygonCollider2D>
+          <Path>288,-288 288,-320 224,-320 224,-288</Path>
+        </PolygonCollider2D>
+      </GameObject>
     </GameObject>
     <GameObject name="Spawn" x="0" y="0" z="0">
       <GameObject name="Scene2" x="409" y="-225" rotation="0" layer="">

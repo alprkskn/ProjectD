@@ -1,7 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" renderorder="left-down" width="30" height="20" tilewidth="32" tileheight="32" nextobjectid="4">
+<map version="1.0" orientation="orthogonal" renderorder="left-down" width="30" height="20" tilewidth="32" tileheight="32" nextobjectid="6">
  <tileset firstgid="1" name="roguelikeSheet_transparent" tilewidth="32" tileheight="32" spacing="2" tilecount="1767" columns="57">
   <image source="../Spritesheet/roguelikeSheet_transparent.png" width="1936" height="1052"/>
+  <tile id="1701">
+   <objectgroup draworder="index">
+    <object id="1" x="0" y="0" width="32" height="32"/>
+   </objectgroup>
+  </tile>
  </tileset>
  <layer name="Tile Layer 1" width="30" height="20">
   <data encoding="base64" compression="zlib">
@@ -20,5 +25,7 @@
    </properties>
   </object>
  </objectgroup>
- <objectgroup name="Entry"/>
+ <objectgroup name="Entry">
+  <object id="4" name="Scene2" x="352" y="224" width="32" height="32"/>
+ </objectgroup>
 </map>

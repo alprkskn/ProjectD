@@ -1,8 +1,12 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System;
 
 public class RPGCharController : MonoBehaviour
 {
+
+    public event Action<Vector2, GameObject> CharacterBumped = delegate { };
+
     private Vector3? _target;
     private bool _running;
     private Transform _transform;
@@ -10,6 +14,7 @@ public class RPGCharController : MonoBehaviour
     public float runMultiplier;
 
     public float baseSpeed;
+    public LayerMask obstacleLayers;
 
     public float speed
     {
@@ -85,6 +90,17 @@ public class RPGCharController : MonoBehaviour
         if (dx != 0 || dy != 0)
         {
             _target = new Vector3(_transform.position.x + tileSize * dx, _transform.position.y + tileSize * dy);
+
+            var col = Physics2D.OverlapCircle((Vector2)_target, 1f, obstacleLayers);
+            if (col != null)
+            {
+                if (Input.anyKeyDown)
+                {
+                    CharacterBumped((Vector2)_target, col.gameObject);
+                    Debug.Log("Character bumped.");
+                }
+                _target = null;
+            }
         }
 
     }
