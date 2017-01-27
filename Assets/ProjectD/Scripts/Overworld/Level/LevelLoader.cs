@@ -8,6 +8,7 @@ public class LevelLoader : MonoBehaviour
 {
     public GameObject[] LevelPrefabs;
     public RPGCharController Player;
+    public OverworldCameraController CameraController;
 
 
     private Dictionary<string, GameObject> _levels;
@@ -55,7 +56,7 @@ public class LevelLoader : MonoBehaviour
         _currentLevelName = levelName;
         SetWarpPoints(go);
         SetSpriteObjects(go);
-
+        CameraController.SetCameraBounds(new Bounds(new Vector3(_currentLevel.MapWidthInPixels / 2, _currentLevel.MapHeightInPixels / 2, 0), new Vector3(_currentLevel.MapWidthInPixels, _currentLevel.MapHeightInPixels, 10)));
         _pathfinder.Create2DMap();
 
         if (isTransition)
