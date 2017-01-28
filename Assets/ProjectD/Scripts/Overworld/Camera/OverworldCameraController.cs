@@ -26,7 +26,7 @@ public class OverworldCameraController : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    void LateUpdate()
     {
         var newPos = new Vector3(_target.position.x, _target.position.y, _transform.position.z);
 

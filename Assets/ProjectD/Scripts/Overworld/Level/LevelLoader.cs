@@ -59,13 +59,9 @@ public class LevelLoader : MonoBehaviour
         CameraController.SetCameraBounds(new Bounds(new Vector3(_currentLevel.MapWidthInPixels / 2, _currentLevel.MapHeightInPixels / 2, 0), new Vector3(_currentLevel.MapWidthInPixels, _currentLevel.MapHeightInPixels, 10)));
         _pathfinder.Create2DMap();
 
-        if (isTransition)
-        {
-            var entry = GetEntryPoint(prevLevel);
-            Player.transform.MoveObjectTo2D(GridUtils.TiledObjectMidPoint(entry));
-            Player.ResetTarget();
-        }
-
+        var entry = GetEntryPoint((isTransition) ? prevLevel : "Spawn");
+        Player.transform.MoveObjectTo2D(GridUtils.TiledObjectMidPoint(entry));
+        Player.ResetTarget();
         return true;
     }
 
