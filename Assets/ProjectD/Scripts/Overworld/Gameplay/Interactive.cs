@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public interface IInteractible
+public interface IInteractive
 {
     string Tooltip();
     void Highlight(bool on);

@@ -5,12 +5,12 @@ using UnityEngine;
 public class InteractionsManager : MonoBehaviour
 {
     private Player _playerScript;
-    private List<IInteractible> _reachibleObjects = new List<IInteractible>();
+    private List<IInteractive> _reachibleObjects = new List<IInteractive>();
 
     public void InitializeForPlayer(Player playerScript)
     {
         _playerScript = playerScript;
-        _playerScript.PlayerReachesInteractibles += OnNewReachibleInteractiblesArrive;
+        _playerScript.PlayerReachesInteractivess += OnNewReachibleInteractivesArrive;
         _playerScript.PlayerInteracts += OnPlayerInteract;
     }
 
@@ -19,31 +19,31 @@ public class InteractionsManager : MonoBehaviour
         throw new System.NotImplementedException();
     }
 
-    private void OnNewReachibleInteractiblesArrive(List<IInteractible> objs)
+    private void OnNewReachibleInteractivesArrive(List<IInteractive> objs)
     {
         // First highlight newly arrived objects.
         // If they were present in the list. Don't do
         // anything about them.
-        foreach(var interactible in objs)
+        foreach(var interactive in objs)
         {
-            if (_reachibleObjects.Contains(interactible))
+            if (_reachibleObjects.Contains(interactive))
             {
-                // list already contains that interactible.
+                // list already contains that interactive.
             }
             else
             {
-                _reachibleObjects.Add(interactible);
-                interactible.Highlight(true);
+                _reachibleObjects.Add(interactive);
+                interactive.Highlight(true);
             }
         }
 
         for(int i = _reachibleObjects.Count-1; i >= 0; i--)
         {
-            var interactible = _reachibleObjects[i];
-            if (!objs.Contains(interactible))
+            var interactive = _reachibleObjects[i];
+            if (!objs.Contains(interactive))
             {
-                interactible.Highlight(false);
-                _reachibleObjects.Remove(interactible);
+                interactive.Highlight(false);
+                _reachibleObjects.Remove(interactive);
             }
         }
     }

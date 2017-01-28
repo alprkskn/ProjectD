@@ -6,7 +6,7 @@ using UnityEngine;
 public class Player : MonoBehaviour
 {
     public event Action PlayerInteracts = delegate { };
-    public event Action<List<IInteractible>> PlayerReachesInteractibles = delegate { };
+    public event Action<List<IInteractive>> PlayerReachesInteractivess = delegate { };
     public event Action<ItemInventory> PlayerOpenedItemInventory = delegate { };
     public event Action<Inventory> PlayerOpenedInventory = delegate { };
 
@@ -33,18 +33,18 @@ public class Player : MonoBehaviour
     {
         var cols = Physics2D.OverlapCircleAll(_transform.position + (Vector3)_charController.facing * _charController.tileSize, 2f);
 
-        var reachible = new List<IInteractible>();
+        var reachible = new List<IInteractive>();
 
         foreach(var obj in cols)
         {
-            var interact = obj.GetComponent<IInteractible>();
+            var interact = obj.GetComponent<IInteractive>();
             if(interact != null)
             {
                 reachible.Add(interact);
             }
         }
 
-        PlayerReachesInteractibles.Invoke(reachible);
+        PlayerReachesInteractivess.Invoke(reachible);
         //dummy.transform.position = this.transform.position + (Vector3)_charController.facing * 32;
     }
 }
