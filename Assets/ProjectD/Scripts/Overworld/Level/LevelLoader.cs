@@ -34,14 +34,14 @@ public class LevelLoader : MonoBehaviour
         _interactionsManager = gameObject.AddComponent<InteractionsManager>();
         _interactionsManager.InitializeForPlayer(PlayerScript);
         _pathfinder = GetComponent<Pathfinder2D>();
-        LoadLevel("Scene1");
+        StartCoroutine(LoadLevel("Scene1"));
     }
 
-    public bool LoadLevel(string levelName, bool isTransition = false)
+    public IEnumerator LoadLevel(string levelName, bool isTransition = false)
     {
         if (!_levels.ContainsKey(levelName))
         {
-            return false;
+            yield break;
         }
 
         string prevLevel = null;
@@ -52,7 +52,11 @@ public class LevelLoader : MonoBehaviour
             // Move this under the map class as a function if it gets more complex.
             prevLevel = _currentLevelName;
             Destroy(_currentLevel.gameObject);
+            _dynamiclevelObjects.Clear();
         }
+
+        yield return new WaitForEndOfFrame();
+
         var go = Instantiate(_levels[levelName]);
         var tm = go.GetComponent<TiledMap>();
 
@@ -71,13 +75,11 @@ public class LevelLoader : MonoBehaviour
 
         PlayerController.transform.MoveObjectTo2D(GridUtils.TiledObjectMidPoint(entry));
         PlayerController.ResetTarget();
-        return true;
     }
 
     private void SetSpriteObjects(GameObject level)
     {
         _dynamiclevelObjects = new List<BaseSprite>();
-
         foreach (var sprite in FindObjectsOfType<BaseSprite>())
         {
             var sr = sprite.SpriteRenderer;
@@ -97,7 +99,7 @@ public class LevelLoader : MonoBehaviour
         foreach (var child in spawnLayer.GetImmediateChildren())
         {
             var wp = child.gameObject.AddComponent<WarpPoint>();
-            wp.PlayerDetected += (x) => LoadLevel(x.name, true);
+            wp.PlayerDetected += (x) => StartCoroutine(LoadLevel(x.name, true));
             Debug.LogFormat("Warp point detected: {0}", child.name);
         }
     }
