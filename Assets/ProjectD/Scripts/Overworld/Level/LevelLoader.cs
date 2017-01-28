@@ -7,10 +7,12 @@ using UnityEngine;
 public class LevelLoader : MonoBehaviour
 {
     public GameObject[] LevelPrefabs;
-    public RPGCharController Player;
+    public RPGCharController PlayerController;
+    public Player PlayerScript;
     public OverworldCameraController CameraController;
 
 
+    private InteractionsManager _interactionsManager;
     private Dictionary<string, GameObject> _levels;
     private List<BaseSprite> _dynamiclevelObjects;
     private TiledMap _currentLevel = null;
@@ -27,6 +29,10 @@ public class LevelLoader : MonoBehaviour
             _levels.Add(lvl.name, lvl);
         }
 
+        PlayerScript = PlayerController.GetComponent<Player>();
+
+        _interactionsManager = gameObject.AddComponent<InteractionsManager>();
+        _interactionsManager.InitializeForPlayer(PlayerScript);
         _pathfinder = GetComponent<Pathfinder2D>();
         LoadLevel("Scene1");
     }
@@ -60,8 +66,11 @@ public class LevelLoader : MonoBehaviour
         _pathfinder.Create2DMap();
 
         var entry = GetEntryPoint((isTransition) ? prevLevel : "Spawn");
-        Player.transform.MoveObjectTo2D(GridUtils.TiledObjectMidPoint(entry));
-        Player.ResetTarget();
+
+        if (!isTransition) PlayerController.facing = Vector2.down;
+
+        PlayerController.transform.MoveObjectTo2D(GridUtils.TiledObjectMidPoint(entry));
+        PlayerController.ResetTarget();
         return true;
     }
 

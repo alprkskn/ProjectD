@@ -12,6 +12,7 @@ public class RPGCharController : MonoBehaviour
     private Transform _transform;
     public int tileSize = 32;
     public float runMultiplier;
+    public Vector2 facing;
 
     public float baseSpeed;
     public LayerMask obstacleLayers;
@@ -101,7 +102,7 @@ public class RPGCharController : MonoBehaviour
                 }
                 _target = null;
             }
+            facing = new Vector2(dx, dy);
         }
-
     }
 }
