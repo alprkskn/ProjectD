@@ -101,8 +101,8 @@ public class RPGCharController : MonoBehaviour
                 }
                 _target = null;
             }
-            facing = new Vector2(dx, dy);
 
+            facing = new Vector2(dx, dy);
         }
     }
 }

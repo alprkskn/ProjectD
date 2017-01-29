@@ -12,6 +12,7 @@ public class LevelLoader : MonoBehaviour
     public OverworldCameraController CameraController;
 
 
+    private GameConfiguration _gameConf;
     private InteractionsManager _interactionsManager;
     private Dictionary<string, GameObject> _levels;
     private List<BaseSprite> _dynamiclevelObjects;
@@ -31,6 +32,7 @@ public class LevelLoader : MonoBehaviour
 
         PlayerScript = PlayerController.GetComponent<Player>();
 
+        _gameConf = gameObject.AddComponent<GameConfiguration>();
         _interactionsManager = gameObject.AddComponent<InteractionsManager>();
         _interactionsManager.InitializeForPlayer(PlayerScript);
         _pathfinder = GetComponent<Pathfinder2D>();
