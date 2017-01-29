@@ -6,12 +6,21 @@ using UnityEngine;
 public class Player : MonoBehaviour
 {
     public event Action PlayerInteracts = delegate { };
-    public event Action<List<IInteractive>> PlayerReachesInteractivess = delegate { };
+    public event Action<List<IInteractive>> PlayerReachesInteractives = delegate { };
     public event Action<ItemInventory> PlayerOpenedItemInventory = delegate { };
     public event Action<Inventory> PlayerOpenedInventory = delegate { };
 
     private RPGCharController _charController;
     private Transform _transform;
+    private Inventory _inventory;
+
+    public Inventory Inventory
+    {
+        get
+        {
+            return _inventory;
+        }
+    }
     //private GameObject dummy;
 
     public void EmitPlayerOpenedItemInventory(ItemInventory inventory)
@@ -24,6 +33,7 @@ public class Player : MonoBehaviour
     {
         _transform = GetComponent<Transform>();
         _charController = GetComponent<RPGCharController>();
+        _inventory = GetComponent<Inventory>();
         //dummy = GameObject.CreatePrimitive(PrimitiveType.Sphere);
         //dummy.transform.localScale = Vector3.one * 16f;
     }
@@ -44,7 +54,12 @@ public class Player : MonoBehaviour
             }
         }
 
-        PlayerReachesInteractivess.Invoke(reachible);
+        PlayerReachesInteractives.Invoke(reachible);
+
+        if (Input.GetKeyDown(KeyCode.X))
+        {
+            PlayerInteracts.Invoke();
+        }
         //dummy.transform.position = this.transform.position + (Vector3)_charController.facing * 32;
     }
 }

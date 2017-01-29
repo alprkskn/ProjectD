@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class InteractionsManager : MonoBehaviour
@@ -10,13 +11,30 @@ public class InteractionsManager : MonoBehaviour
     public void InitializeForPlayer(Player playerScript)
     {
         _playerScript = playerScript;
-        _playerScript.PlayerReachesInteractivess += OnNewReachibleInteractivesArrive;
+        _playerScript.PlayerReachesInteractives += OnNewReachibleInteractivesArrive;
         _playerScript.PlayerInteracts += OnPlayerInteract;
+        _playerScript.PlayerOpenedItemInventory += OnPlayerOpensItemInventory;
+    }
+
+    private void OnPlayerOpensItemInventory(ItemInventory obj)
+    {
+
+        // TODO: This event will not be used by this manager.
+        // This is just an example usage for the inventory interaction.
+        foreach(var item in obj.items)
+        {
+            _playerScript.Inventory.AddItem(item);
+        }
+
+        obj.items.Clear();
     }
 
     private void OnPlayerInteract()
     {
-        throw new System.NotImplementedException();
+        if (_reachibleObjects.Count > 0)
+        {
+            _reachibleObjects.Last().Interact(_playerScript.gameObject);
+        }
     }
 
     private void OnNewReachibleInteractivesArrive(List<IInteractive> objs)
