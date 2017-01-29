@@ -1,0 +1,2 @@
+Scene1/Objects/ThreeByTwo BrokenTablet;Helmet
+Scene1/Objects/OneByTwoTable Olta;VikingHat;Headset

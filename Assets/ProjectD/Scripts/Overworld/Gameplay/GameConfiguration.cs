@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class GameConfiguration : MonoBehaviour
@@ -13,7 +14,7 @@ public class GameConfiguration : MonoBehaviour
     private Dictionary<string, GameObject> _items;
     private Dictionary<string, List<BaseItem>> _inventoryStates;
 
-    public void InitializeFromPlayerPrefs()
+    public void SetupFromPlayerPrefs()
     {
         if (PlayerPrefs.HasKey("CurrentQuest"))
         {
@@ -38,8 +39,53 @@ public class GameConfiguration : MonoBehaviour
         LastLoadedScene = PlayerPrefs.GetString("PlayerScene");        
     }
 
+    public void SetupFromInitializationFiles()
+    {
+        CurrentQuestId = 0;
+        _inventoryStates = new Dictionary<string, List<BaseItem>>();
+
+        var initialInventoriesFile = Resources.Load<TextAsset>("GameInfo/InitialInventoryStates");
+
+        var initialInventories = new Dictionary<string, string>();
+        foreach(var s in initialInventoriesFile.text.Split('\n').Select(x => x.Replace("\r", "")))
+        {
+            var split = s.Split();
+            initialInventories.Add(split[0], split[1]);
+        }
+
+        foreach(var name in InventoryNames)
+        {
+            _inventoryStates.Add(name, new List<BaseItem>());
+
+            if (initialInventories.ContainsKey(name))
+            {
+                foreach (var item in initialInventories[name].Split(';'))
+                {
+                    if (_items.ContainsKey(item))
+                    {
+                        _inventoryStates[name].Add(_items[item].GetComponentInChildren<BaseItem>());
+                    }
+                    else
+                    {
+                        Debug.LogFormat("Items list does not contain {0}", item);
+                    }
+                }
+            }
+        }
+    }
+
+    public List<BaseItem> GetInventoryState(string inventoryName)
+    {
+        if (_inventoryStates.ContainsKey(inventoryName))
+        {
+            return _inventoryStates[inventoryName];
+        }
+
+        return null;
+    }
+
     // Use this for initialization
-    void Start()
+    public void Initialize()
     {
         PopulateInventoryNames();
         PopulateItems();

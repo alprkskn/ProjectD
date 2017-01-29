@@ -33,6 +33,9 @@ public class LevelLoader : MonoBehaviour
         PlayerScript = PlayerController.GetComponent<Player>();
 
         _gameConf = gameObject.AddComponent<GameConfiguration>();
+        _gameConf.Initialize();
+        _gameConf.SetupFromInitializationFiles();
+
         _interactionsManager = gameObject.AddComponent<InteractionsManager>();
         _interactionsManager.InitializeForPlayer(PlayerScript);
         _pathfinder = GetComponent<Pathfinder2D>();
@@ -68,6 +71,7 @@ public class LevelLoader : MonoBehaviour
         _currentLevelName = levelName;
         SetWarpPoints(go);
         SetSpriteObjects(go);
+        PopulateInventories(go);
         CameraController.SetCameraBounds(new Bounds(new Vector3(_currentLevel.MapWidthInPixels / 2, _currentLevel.MapHeightInPixels / 2, 0), new Vector3(_currentLevel.MapWidthInPixels, _currentLevel.MapHeightInPixels, 10)));
         _pathfinder.Create2DMap();
 
@@ -103,6 +107,23 @@ public class LevelLoader : MonoBehaviour
             var wp = child.gameObject.AddComponent<WarpPoint>();
             wp.PlayerDetected += (x) => StartCoroutine(LoadLevel(x.name, true));
             Debug.LogFormat("Warp point detected: {0}", child.name);
+        }
+    }
+
+    private void PopulateInventories(GameObject level)
+    {
+        var inventories = level.GetComponentsInChildren<ItemInventory>();
+
+        foreach(var inv in inventories)
+        {
+            var hashString = _currentLevelName + "/Objects/" + inv.name;
+
+            var items = _gameConf.GetInventoryState(hashString);
+
+            if(items != null)
+            {
+                inv.items = items;
+            }
         }
     }
 
