@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Tiled2Unity;
@@ -34,12 +35,32 @@ public class LevelLoader : MonoBehaviour
 
         _gameConf = gameObject.AddComponent<GameConfiguration>();
         _gameConf.Initialize();
-        _gameConf.SetupFromInitializationFiles();
 
         _interactionsManager = gameObject.AddComponent<InteractionsManager>();
         _interactionsManager.InitializeForPlayer(PlayerScript);
         _pathfinder = GetComponent<Pathfinder2D>();
-        StartCoroutine(LoadLevel("Scene1"));
+
+        if (PlayerPrefs.HasKey("SaveGame"))
+        {
+            try
+            {
+                _gameConf.SetupFromPlayerPrefs(PlayerScript.GetComponent<Inventory>());
+            }
+            catch(Exception e)
+            {
+                Debug.Log("Save game could not be restored. " + e.Message);
+                Debug.Log("Initializing a new game. Clearing the old save game prefs.");
+                _gameConf.ResetPlayerPrefs();
+                _gameConf.SetupFromInitializationFiles();
+            }
+        }
+        else
+        {
+            _gameConf.SetupFromInitializationFiles();
+        }
+        StartCoroutine(LoadLevel(_gameConf.LastLoadedScene));
+        PlayerController.transform.MoveObjectTo2D(_gameConf.LastPlayerPosition);
+        PlayerController.facing = Vector2.down;
     }
 
     public IEnumerator LoadLevel(string levelName, bool isTransition = false)
@@ -75,12 +96,24 @@ public class LevelLoader : MonoBehaviour
         CameraController.SetCameraBounds(new Bounds(new Vector3(_currentLevel.MapWidthInPixels / 2, _currentLevel.MapHeightInPixels / 2, 0), new Vector3(_currentLevel.MapWidthInPixels, _currentLevel.MapHeightInPixels, 10)));
         _pathfinder.Create2DMap();
 
-        var entry = GetEntryPoint((isTransition) ? prevLevel : "Spawn");
 
-        if (!isTransition) PlayerController.facing = Vector2.down;
 
-        PlayerController.transform.MoveObjectTo2D(GridUtils.TiledObjectMidPoint(entry));
-        PlayerController.ResetTarget();
+        if (isTransition)
+        {
+            var entry = GetEntryPoint(prevLevel);
+            PlayerController.transform.MoveObjectTo2D(GridUtils.TiledObjectMidPoint(entry));
+            PlayerController.ResetTarget();
+        }
+    }
+
+    public void SaveAndQuit()
+    {
+        _gameConf.LastPlayerPosition = PlayerController.Position;
+        _gameConf.LastLoadedScene = _currentLevelName;
+        _gameConf.SaveToPlayerPrefs(PlayerScript.GetComponent<Inventory>());
+
+        // TODO: Actually, return to main menu.
+        Application.Quit();
     }
 
     private void SetSpriteObjects(GameObject level)
@@ -144,6 +177,15 @@ public class LevelLoader : MonoBehaviour
             {
                 obj.SpriteRenderer.sortingOrder = (int) ((_currentLevel.MapHeightInPixels / _currentLevel.TileHeight) - (obj.transform.position.y - obj.SpriteRenderer.bounds.extents.y) / _currentLevel.TileHeight + obj.Levitation);
             }
+        }
+
+        if (Input.GetKeyDown(KeyCode.F5))
+        {
+            SaveAndQuit();
+        }
+        else if (Input.GetKeyDown(KeyCode.F9))
+        {
+            _gameConf.ResetPlayerPrefs();
         }
     }
 }

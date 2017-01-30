@@ -25,6 +25,21 @@ public class RPGCharController : MonoBehaviour
         }
     }
 
+    public Vector2 Position
+    {
+        get
+        {
+            if (_target.HasValue)
+            {
+                return _target.Value;
+            }
+            else
+            {
+                return _transform.position;
+            }
+        }
+    }
+
     public void ResetTarget()
     {
         _target = null;
