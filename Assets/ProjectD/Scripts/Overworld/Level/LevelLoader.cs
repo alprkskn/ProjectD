@@ -15,6 +15,8 @@ public class LevelLoader : MonoBehaviour
 
     private GameConfiguration _gameConf;
     private InteractionsManager _interactionsManager;
+    private EventManager _eventManager;
+
     private Dictionary<string, GameObject> _levels;
     private List<BaseSprite> _dynamiclevelObjects;
     private TiledMap _currentLevel = null;
@@ -38,6 +40,10 @@ public class LevelLoader : MonoBehaviour
 
         _interactionsManager = gameObject.AddComponent<InteractionsManager>();
         _interactionsManager.InitializeForPlayer(PlayerScript);
+
+        _eventManager = gameObject.AddComponent<EventManager>();
+        _eventManager.Initialize();
+
         _pathfinder = GetComponent<Pathfinder2D>();
 
         if (PlayerPrefs.HasKey("SaveGame"))
@@ -77,6 +83,8 @@ public class LevelLoader : MonoBehaviour
             // Destroy level
             // Move this under the map class as a function if it gets more complex.
             prevLevel = _currentLevelName;
+
+            _eventManager.RemoveSceneTriggers(_currentLevel.gameObject);
             Destroy(_currentLevel.gameObject);
             _dynamiclevelObjects.Clear();
         }
@@ -90,12 +98,15 @@ public class LevelLoader : MonoBehaviour
         _currentLevel = tm;
         GridUtils.SetGridTileSize(_currentLevel.TileHeight);
         _currentLevelName = levelName;
+
         SetWarpPoints(go);
         SetSpriteObjects(go);
+        SetSceneTriggers(go);
         PopulateInventories(go);
+
         CameraController.SetCameraBounds(new Bounds(new Vector3(_currentLevel.MapWidthInPixels / 2, _currentLevel.MapHeightInPixels / 2, 0), new Vector3(_currentLevel.MapWidthInPixels, _currentLevel.MapHeightInPixels, 10)));
         _pathfinder.Create2DMap();
-
+        _eventManager.AddSceneTriggers(_currentLevel.gameObject);
 
 
         if (isTransition)
@@ -141,6 +152,12 @@ public class LevelLoader : MonoBehaviour
             wp.PlayerDetected += (x) => StartCoroutine(LoadLevel(x.name, true));
             Debug.LogFormat("Warp point detected: {0}", child.name);
         }
+    }
+
+    private void SetSceneTriggers(GameObject level)
+    {
+        // TODO: Decide how you will define triggers on level objects.
+        // Create or set the triggers in this  method.
     }
 
     private void PopulateInventories(GameObject level)
