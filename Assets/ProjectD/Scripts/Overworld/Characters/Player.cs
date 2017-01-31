@@ -3,63 +3,66 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Player : MonoBehaviour
+namespace ProjectD.Overworld
 {
-    public event Action PlayerInteracts = delegate { };
-    public event Action<List<IInteractive>> PlayerReachesInteractives = delegate { };
-    public event Action<ItemInventory> PlayerOpenedItemInventory = delegate { };
-    public event Action<Inventory> PlayerOpenedInventory = delegate { };
-
-    private RPGCharController _charController;
-    private Transform _transform;
-    private Inventory _inventory;
-
-    public Inventory Inventory
+    public class Player : MonoBehaviour
     {
-        get
+        public event Action PlayerInteracts = delegate { };
+        public event Action<List<IInteractive>> PlayerReachesInteractives = delegate { };
+        public event Action<ItemInventory> PlayerOpenedItemInventory = delegate { };
+        public event Action<Inventory> PlayerOpenedInventory = delegate { };
+
+        private RPGCharController _charController;
+        private Transform _transform;
+        private Inventory _inventory;
+
+        public Inventory Inventory
         {
-            return _inventory;
-        }
-    }
-    //private GameObject dummy;
-
-    public void EmitPlayerOpenedItemInventory(ItemInventory inventory)
-    {
-        PlayerOpenedItemInventory.Invoke(inventory);
-    }
-
-    // Use this for initialization
-    void Start()
-    {
-        _transform = GetComponent<Transform>();
-        _charController = GetComponent<RPGCharController>();
-        _inventory = GetComponent<Inventory>();
-        //dummy = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-        //dummy.transform.localScale = Vector3.one * 16f;
-    }
-
-    // Update is called once per frame
-    void LateUpdate()
-    {
-        var cols = Physics2D.OverlapCircleAll(_transform.position + (Vector3)_charController.facing * _charController.tileSize, 2f);
-
-        var reachible = new List<IInteractive>();
-
-        foreach(var obj in cols)
-        {
-            var interact = obj.GetComponent<IInteractive>();
-            if(interact != null)
+            get
             {
-                reachible.Add(interact);
+                return _inventory;
             }
         }
+        //private GameObject dummy;
 
-        PlayerReachesInteractives.Invoke(reachible);
-
-        if (Input.GetKeyDown(KeyCode.X))
+        public void EmitPlayerOpenedItemInventory(ItemInventory inventory)
         {
-            PlayerInteracts.Invoke();
+            PlayerOpenedItemInventory.Invoke(inventory);
         }
-        //dummy.transform.position = this.transform.position + (Vector3)_charController.facing * 32;
+
+        // Use this for initialization
+        void Start()
+        {
+            _transform = GetComponent<Transform>();
+            _charController = GetComponent<RPGCharController>();
+            _inventory = GetComponent<Inventory>();
+            //dummy = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+            //dummy.transform.localScale = Vector3.one * 16f;
+        }
+
+        // Update is called once per frame
+        void LateUpdate()
+        {
+            var cols = Physics2D.OverlapCircleAll(_transform.position + (Vector3)_charController.facing * _charController.tileSize, 2f);
+
+            var reachible = new List<IInteractive>();
+
+            foreach (var obj in cols)
+            {
+                var interact = obj.GetComponent<IInteractive>();
+                if (interact != null)
+                {
+                    reachible.Add(interact);
+                }
+            }
+
+            PlayerReachesInteractives.Invoke(reachible);
+
+            if (Input.GetKeyDown(KeyCode.X))
+            {
+                PlayerInteracts.Invoke();
+            }
+            //dummy.transform.position = this.transform.position + (Vector3)_charController.facing * 32;
+        }
     }
 }

@@ -2,20 +2,23 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Inventory : MonoBehaviour
+namespace ProjectD.Overworld
 {
-    public List<BaseItem> items = new List<BaseItem>();
-
-    public void AddItem(BaseItem item)
+    public class Inventory : MonoBehaviour
     {
-        items.Add(item);
-    }
+        public List<BaseItem> items = new List<BaseItem>();
 
-    public void RemoveItem(BaseItem item)
-    {
-        if (items.Contains(item))
+        public void AddItem(BaseItem item)
         {
-            items.Remove(item);
+            items.Add(item);
+        }
+
+        public void RemoveItem(BaseItem item)
+        {
+            if (items.Contains(item))
+            {
+                items.Remove(item);
+            }
         }
     }
 }

@@ -5,221 +5,224 @@ using System.Linq;
 using Tiled2Unity;
 using UnityEngine;
 
-public class LevelLoader : MonoBehaviour
+namespace ProjectD.Overworld
 {
-    public GameObject[] LevelPrefabs;
-    public RPGCharController PlayerController;
-    public Player PlayerScript;
-    public OverworldCameraController CameraController;
-
-
-    private GameConfiguration _gameConf;
-    private InteractionsManager _interactionsManager;
-    private EventManager _eventManager;
-    private QuestManager _questManager;
-
-    private Dictionary<string, GameObject> _levels;
-    private List<BaseSprite> _dynamiclevelObjects;
-    private TiledMap _currentLevel = null;
-    private string _currentLevelName = null;
-    private Pathfinder2D _pathfinder;
-
-    void Awake()
+    public class LevelLoader : MonoBehaviour
     {
-        DontDestroyOnLoad(this.gameObject);
+        public GameObject[] LevelPrefabs;
+        public RPGCharController PlayerController;
+        public Player PlayerScript;
+        public OverworldCameraController CameraController;
 
-        _levels = new Dictionary<string, GameObject>();
-        foreach (var lvl in LevelPrefabs)
+
+        private GameConfiguration _gameConf;
+        private InteractionsManager _interactionsManager;
+        private EventManager _eventManager;
+        private QuestManager _questManager;
+
+        private Dictionary<string, GameObject> _levels;
+        private List<BaseSprite> _dynamiclevelObjects;
+        private TiledMap _currentLevel = null;
+        private string _currentLevelName = null;
+        private Pathfinder2D _pathfinder;
+
+        void Awake()
         {
-            _levels.Add(lvl.name, lvl);
-        }
+            DontDestroyOnLoad(this.gameObject);
 
-        PlayerScript = PlayerController.GetComponent<Player>();
-
-        _gameConf = gameObject.AddComponent<GameConfiguration>();
-        _gameConf.Initialize();
-
-        _interactionsManager = gameObject.AddComponent<InteractionsManager>();
-        _interactionsManager.InitializeForPlayer(PlayerScript);
-
-        _eventManager = gameObject.AddComponent<EventManager>();
-        _eventManager.Initialize();
-
-        _questManager = gameObject.AddComponent<QuestManager>();
-        _questManager.QuestCompleted += OnQuestCompleted;
-
-        _pathfinder = GetComponent<Pathfinder2D>();
-
-        if (PlayerPrefs.HasKey("SaveGame"))
-        {
-            try
+            _levels = new Dictionary<string, GameObject>();
+            foreach (var lvl in LevelPrefabs)
             {
-                _gameConf.SetupFromPlayerPrefs(PlayerScript.GetComponent<Inventory>());
+                _levels.Add(lvl.name, lvl);
             }
-            catch(Exception e)
+
+            PlayerScript = PlayerController.GetComponent<Player>();
+
+            _gameConf = gameObject.AddComponent<GameConfiguration>();
+            _gameConf.Initialize();
+
+            _interactionsManager = gameObject.AddComponent<InteractionsManager>();
+            _interactionsManager.InitializeForPlayer(PlayerScript);
+
+            _eventManager = gameObject.AddComponent<EventManager>();
+            _eventManager.Initialize();
+
+            _questManager = gameObject.AddComponent<QuestManager>();
+            _questManager.QuestCompleted += OnQuestCompleted;
+
+            _pathfinder = GetComponent<Pathfinder2D>();
+
+            if (PlayerPrefs.HasKey("SaveGame"))
             {
-                Debug.Log("Save game could not be restored. " + e.Message);
-                Debug.Log("Initializing a new game. Clearing the old save game prefs.");
-                _gameConf.ResetPlayerPrefs();
+                try
+                {
+                    _gameConf.SetupFromPlayerPrefs(PlayerScript.GetComponent<Inventory>());
+                }
+                catch (Exception e)
+                {
+                    Debug.Log("Save game could not be restored. " + e.Message);
+                    Debug.Log("Initializing a new game. Clearing the old save game prefs.");
+                    _gameConf.ResetPlayerPrefs();
+                    _gameConf.SetupFromInitializationFiles();
+                }
+            }
+            else
+            {
                 _gameConf.SetupFromInitializationFiles();
             }
-        }
-        else
-        {
-            _gameConf.SetupFromInitializationFiles();
-        }
-        StartCoroutine(LoadLevel(_gameConf.LastLoadedScene));
-        PlayerController.transform.MoveObjectTo2D(_gameConf.LastPlayerPosition);
-        PlayerController.facing = Vector2.down;
-    }
-
-    private void PushQuest(Quest quest)
-    {
-        _questManager.SetCurrentQuest(quest);
-        _eventManager.RegisterEvents(quest.QuestEvents);
-    }
-
-    private void OnQuestCompleted(Quest obj)
-    {
-        // TODO: Do whatever you need after a finished quest and push the new quest to the manager.
-        _eventManager.UnregisterEvents(obj.QuestEvents);
-        _eventManager.RegisterEvents(obj.NextQuest.QuestEvents);
-    }
-
-    public IEnumerator LoadLevel(string levelName, bool isTransition = false)
-    {
-        if (!_levels.ContainsKey(levelName))
-        {
-            yield break;
+            StartCoroutine(LoadLevel(_gameConf.LastLoadedScene));
+            PlayerController.transform.MoveObjectTo2D(_gameConf.LastPlayerPosition);
+            PlayerController.facing = Vector2.down;
         }
 
-        string prevLevel = null;
-
-        if (_currentLevel != null)
+        private void PushQuest(Quest quest)
         {
-            // Destroy level
-            // Move this under the map class as a function if it gets more complex.
-            prevLevel = _currentLevelName;
-
-            _eventManager.RemoveSceneTriggers(_currentLevel.gameObject);
-            Destroy(_currentLevel.gameObject);
-            _dynamiclevelObjects.Clear();
+            _questManager.SetCurrentQuest(quest);
+            _eventManager.RegisterEvents(quest.QuestEvents);
         }
 
-        yield return new WaitForEndOfFrame();
-
-        var go = Instantiate(_levels[levelName]);
-        var tm = go.GetComponent<TiledMap>();
-
-        go.transform.position = Vector2.up * tm.MapHeightInPixels;
-        _currentLevel = tm;
-        GridUtils.SetGridTileSize(_currentLevel.TileHeight);
-        _currentLevelName = levelName;
-
-        SetWarpPoints(go);
-        SetSpriteObjects(go);
-        SetSceneTriggers(go);
-        PopulateInventories(go);
-
-        CameraController.SetCameraBounds(new Bounds(new Vector3(_currentLevel.MapWidthInPixels / 2, _currentLevel.MapHeightInPixels / 2, 0), new Vector3(_currentLevel.MapWidthInPixels, _currentLevel.MapHeightInPixels, 10)));
-        _pathfinder.Create2DMap();
-        _eventManager.AddSceneTriggers(_currentLevel.gameObject);
-
-
-        if (isTransition)
+        private void OnQuestCompleted(Quest obj)
         {
-            var entry = GetEntryPoint(prevLevel);
-            PlayerController.transform.MoveObjectTo2D(GridUtils.TiledObjectMidPoint(entry));
-            PlayerController.ResetTarget();
+            // TODO: Do whatever you need after a finished quest and push the new quest to the manager.
+            _eventManager.UnregisterEvents(obj.QuestEvents);
+            _eventManager.RegisterEvents(obj.NextQuest.QuestEvents);
         }
-    }
 
-    public void SaveAndQuit()
-    {
-        _gameConf.LastPlayerPosition = PlayerController.Position;
-        _gameConf.LastLoadedScene = _currentLevelName;
-        _gameConf.SaveToPlayerPrefs(PlayerScript.GetComponent<Inventory>());
-
-        // TODO: Actually, return to main menu.
-        Application.Quit();
-    }
-
-    private void SetSpriteObjects(GameObject level)
-    {
-        _dynamiclevelObjects = new List<BaseSprite>();
-        foreach (var sprite in FindObjectsOfType<BaseSprite>())
+        public IEnumerator LoadLevel(string levelName, bool isTransition = false)
         {
-            var sr = sprite.SpriteRenderer;
-            sr.sortingOrder = (_currentLevel.MapHeightInPixels / _currentLevel.TileHeight) - (int)(sprite.transform.position.y - sr.bounds.extents.y) / _currentLevel.TileHeight + sprite.Levitation;
-
-            if (!sprite.gameObject.isStatic)
+            if (!_levels.ContainsKey(levelName))
             {
-                _dynamiclevelObjects.Add(sprite);
+                yield break;
             }
-        }
-    }
 
-    private void SetWarpPoints(GameObject level)
-    {
-        var spawnLayer = level.transform.Find("Spawn");
+            string prevLevel = null;
 
-        foreach (var child in spawnLayer.GetImmediateChildren())
-        {
-            var wp = child.gameObject.AddComponent<WarpPoint>();
-            wp.PlayerDetected += (x) => StartCoroutine(LoadLevel(x.name, true));
-            Debug.LogFormat("Warp point detected: {0}", child.name);
-        }
-    }
-
-    private void SetSceneTriggers(GameObject level)
-    {
-        // TODO: Decide how you will define triggers on level objects.
-        // Create or set the triggers in this  method.
-    }
-
-    private void PopulateInventories(GameObject level)
-    {
-        var inventories = level.GetComponentsInChildren<ItemInventory>();
-
-        foreach(var inv in inventories)
-        {
-            var hashString = _currentLevelName + "/Objects/" + inv.name;
-
-            var items = _gameConf.GetInventoryState(hashString);
-
-            if(items != null)
+            if (_currentLevel != null)
             {
-                inv.items = items;
+                // Destroy level
+                // Move this under the map class as a function if it gets more complex.
+                prevLevel = _currentLevelName;
+
+                _eventManager.RemoveSceneTriggers(_currentLevel.gameObject);
+                Destroy(_currentLevel.gameObject);
+                _dynamiclevelObjects.Clear();
             }
-        }
-    }
 
-    private GameObject GetEntryPoint(string prevLevel)
-    {
-        var entryLayer = _currentLevel.transform.Find("Entry");
+            yield return new WaitForEndOfFrame();
 
-        var entryTile = entryLayer.GetImmediateChildren().Where(x => x.name == prevLevel).First();
+            var go = Instantiate(_levels[levelName]);
+            var tm = go.GetComponent<TiledMap>();
 
-        return entryTile.gameObject;
-    }
+            go.transform.position = Vector2.up * tm.MapHeightInPixels;
+            _currentLevel = tm;
+            GridUtils.SetGridTileSize(_currentLevel.TileHeight);
+            _currentLevelName = levelName;
 
-    void Update()
-    {
-        if (_dynamiclevelObjects != null)
-        {
-            foreach (var obj in _dynamiclevelObjects)
+            SetWarpPoints(go);
+            SetSpriteObjects(go);
+            SetSceneTriggers(go);
+            PopulateInventories(go);
+
+            CameraController.SetCameraBounds(new Bounds(new Vector3(_currentLevel.MapWidthInPixels / 2, _currentLevel.MapHeightInPixels / 2, 0), new Vector3(_currentLevel.MapWidthInPixels, _currentLevel.MapHeightInPixels, 10)));
+            _pathfinder.Create2DMap();
+            _eventManager.AddSceneTriggers(_currentLevel.gameObject);
+
+
+            if (isTransition)
             {
-                obj.SpriteRenderer.sortingOrder = (int) ((_currentLevel.MapHeightInPixels / _currentLevel.TileHeight) - (obj.transform.position.y - obj.SpriteRenderer.bounds.extents.y) / _currentLevel.TileHeight + obj.Levitation);
+                var entry = GetEntryPoint(prevLevel);
+                PlayerController.transform.MoveObjectTo2D(GridUtils.TiledObjectMidPoint(entry));
+                PlayerController.ResetTarget();
             }
         }
 
-        if (Input.GetKeyDown(KeyCode.F5))
+        public void SaveAndQuit()
         {
-            SaveAndQuit();
+            _gameConf.LastPlayerPosition = PlayerController.Position;
+            _gameConf.LastLoadedScene = _currentLevelName;
+            _gameConf.SaveToPlayerPrefs(PlayerScript.GetComponent<Inventory>());
+
+            // TODO: Actually, return to main menu.
+            Application.Quit();
         }
-        else if (Input.GetKeyDown(KeyCode.F9))
+
+        private void SetSpriteObjects(GameObject level)
         {
-            _gameConf.ResetPlayerPrefs();
+            _dynamiclevelObjects = new List<BaseSprite>();
+            foreach (var sprite in FindObjectsOfType<BaseSprite>())
+            {
+                var sr = sprite.SpriteRenderer;
+                sr.sortingOrder = (_currentLevel.MapHeightInPixels / _currentLevel.TileHeight) - (int)(sprite.transform.position.y - sr.bounds.extents.y) / _currentLevel.TileHeight + sprite.Levitation;
+
+                if (!sprite.gameObject.isStatic)
+                {
+                    _dynamiclevelObjects.Add(sprite);
+                }
+            }
+        }
+
+        private void SetWarpPoints(GameObject level)
+        {
+            var spawnLayer = level.transform.Find("Spawn");
+
+            foreach (var child in spawnLayer.GetImmediateChildren())
+            {
+                var wp = child.gameObject.AddComponent<WarpPoint>();
+                wp.PlayerDetected += (x) => StartCoroutine(LoadLevel(x.name, true));
+                Debug.LogFormat("Warp point detected: {0}", child.name);
+            }
+        }
+
+        private void SetSceneTriggers(GameObject level)
+        {
+            // TODO: Decide how you will define triggers on level objects.
+            // Create or set the triggers in this  method.
+        }
+
+        private void PopulateInventories(GameObject level)
+        {
+            var inventories = level.GetComponentsInChildren<ItemInventory>();
+
+            foreach (var inv in inventories)
+            {
+                var hashString = _currentLevelName + "/Objects/" + inv.name;
+
+                var items = _gameConf.GetInventoryState(hashString);
+
+                if (items != null)
+                {
+                    inv.items = items;
+                }
+            }
+        }
+
+        private GameObject GetEntryPoint(string prevLevel)
+        {
+            var entryLayer = _currentLevel.transform.Find("Entry");
+
+            var entryTile = entryLayer.GetImmediateChildren().Where(x => x.name == prevLevel).First();
+
+            return entryTile.gameObject;
+        }
+
+        void Update()
+        {
+            if (_dynamiclevelObjects != null)
+            {
+                foreach (var obj in _dynamiclevelObjects)
+                {
+                    obj.SpriteRenderer.sortingOrder = (int)((_currentLevel.MapHeightInPixels / _currentLevel.TileHeight) - (obj.transform.position.y - obj.SpriteRenderer.bounds.extents.y) / _currentLevel.TileHeight + obj.Levitation);
+                }
+            }
+
+            if (Input.GetKeyDown(KeyCode.F5))
+            {
+                SaveAndQuit();
+            }
+            else if (Input.GetKeyDown(KeyCode.F9))
+            {
+                _gameConf.ResetPlayerPrefs();
+            }
         }
     }
 }

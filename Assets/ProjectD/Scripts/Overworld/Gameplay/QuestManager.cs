@@ -4,60 +4,64 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class Quest
+namespace ProjectD.Overworld
 {
-    public string Brief;
-    public string Description;
 
-    public Dictionary<string, bool> RequiredActions;
-    public List<Event> QuestEvents;
-
-    public Quest NextQuest;
-
-    public bool CheckFinished()
+    public class Quest
     {
-        return RequiredActions.All(x => x.Value);
-    }
-}
+        public string Brief;
+        public string Description;
 
-public class QuestManager : MonoBehaviour
-{
-    public event Action<Quest> QuestCompleted = delegate { };
+        public Dictionary<string, bool> RequiredActions;
+        public List<Event> QuestEvents;
 
-    private Quest _currentQuest;
+        public Quest NextQuest;
 
-    public Quest CurrentQuest
-    {
-        get { return _currentQuest; }
-    }
-
-    public void SetString(string message)
-    {
-        if (_currentQuest.RequiredActions.ContainsKey(message))
+        public bool CheckFinished()
         {
-            _currentQuest.RequiredActions[message] = true;
-            if (_currentQuest.CheckFinished())
-            {
-                QuestCompleted.Invoke(_currentQuest);
-                _currentQuest = _currentQuest.NextQuest;
-            }
+            return RequiredActions.All(x => x.Value);
         }
     }
 
-    public void SetCurrentQuest(Quest quest)
+    public class QuestManager : MonoBehaviour
     {
-        _currentQuest = quest;
-    }
+        public event Action<Quest> QuestCompleted = delegate { };
 
-    // Use this for initialization
-    void Start()
-    {
+        private Quest _currentQuest;
 
-    }
+        public Quest CurrentQuest
+        {
+            get { return _currentQuest; }
+        }
 
-    // Update is called once per frame
-    void Update()
-    {
+        public void SetString(string message)
+        {
+            if (_currentQuest.RequiredActions.ContainsKey(message))
+            {
+                _currentQuest.RequiredActions[message] = true;
+                if (_currentQuest.CheckFinished())
+                {
+                    QuestCompleted.Invoke(_currentQuest);
+                    _currentQuest = _currentQuest.NextQuest;
+                }
+            }
+        }
 
+        public void SetCurrentQuest(Quest quest)
+        {
+            _currentQuest = quest;
+        }
+
+        // Use this for initialization
+        void Start()
+        {
+
+        }
+
+        // Update is called once per frame
+        void Update()
+        {
+
+        }
     }
 }
