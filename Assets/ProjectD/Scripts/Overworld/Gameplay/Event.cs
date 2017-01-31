@@ -45,21 +45,23 @@ public class Event
     private float _initialTimer;
 
     public float Timer;
+    public string TriggerID;
     public Trigger Trigger;
+    public bool Active;
 
     public List<Action> EventActions;
 }
 
 public class EventManager : MonoBehaviour
 {
-    private List<Event> _registeredEvents;
+    private Dictionary<string, List<Event>> _registeredEvents;
     private List<Event> _tickingEvents;
 
     private Dictionary<string, Trigger> _triggers;
 
     public void Initialize()
     {
-        _registeredEvents = new List<Event>();
+        _registeredEvents = new Dictionary<string, List<Event>>();
         _tickingEvents = new List<Event>();
         _triggers = new Dictionary<string, Trigger>();
 
@@ -79,6 +81,7 @@ public class EventManager : MonoBehaviour
     public void AddSceneTriggers(GameObject scene)
     {
         // TODO: Add new triggers that come with the new scene.
+        RefreshTriggers();
     }
 
     void Update()
@@ -94,38 +97,58 @@ public class EventManager : MonoBehaviour
             }
 
             _tickingEvents.RemoveAt(i);
-            _registeredEvents.Remove(evnt);
         }
     }
 
     public void RegisterEvent(Event e)
     {
-        _registeredEvents.Add(e);
-
-        if (e.Trigger != null)
+        e.Active = true;
+        if (e.TriggerID != null)
         {
-            e.Trigger.FireEvent += (trig) => _tickingEvents.Add(e);
+            if(!_registeredEvents.ContainsKey(e.TriggerID))
+            {
+                _registeredEvents.Add(e.TriggerID, new List<Event>());
+            }
+            _registeredEvents[e.TriggerID].Add(e);
         }
         else
         {
             _tickingEvents.Add(e);
         }
+        RefreshTriggers();
     }
 
     public void RegisterEvents(List<Event> e)
     {
         foreach (var evnt in e)
         {
-            _registeredEvents.Add(evnt);
-
-            if (evnt.Trigger != null)
+            evnt.Active = true;
+            if (evnt.TriggerID != null)
             {
-                evnt.Trigger.FireEvent += (trig) => _tickingEvents.Add(evnt);
+                if(!_registeredEvents.ContainsKey(evnt.TriggerID))
+                {
+                    _registeredEvents.Add(evnt.TriggerID, new List<Event>());
+                }
+                _registeredEvents[evnt.TriggerID].Add(evnt);
             }
             else
             {
                 _tickingEvents.Add(evnt);
             }
+        }
+        RefreshTriggers();
+    }
+
+    public void UnregisterEvents(List<Event> e)
+    {
+        foreach(var pair in _registeredEvents)
+        {
+            pair.Value.RemoveAll(x => e.Contains(x));
+        }
+
+        foreach(var evnt in e)
+        {
+            evnt.Active = false;
         }
     }
 
@@ -134,6 +157,36 @@ public class EventManager : MonoBehaviour
         foreach (var act in evnt.EventActions)
         {
             act.Invoke();
+        }
+    }
+
+    private void RefreshTriggers()
+    {
+        foreach (var pair in _registeredEvents)
+        {
+            foreach (var e in pair.Value)
+            {
+                if (_triggers.ContainsKey(pair.Key))
+                {
+                    if (e.Trigger == null)
+                    {
+                        var trig = _triggers[pair.Key];
+                        e.Trigger = trig;
+                        trig.FireEvent += (t) =>
+                        {
+                            if (e.Active)
+                            {
+                                _tickingEvents.Add(e);
+                                _registeredEvents[pair.Key].Remove(e);
+                            }
+                        };
+                    }
+                }
+                else
+                {
+                    e.Trigger = null;
+                }
+            }
         }
     }
 }

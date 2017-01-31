@@ -16,6 +16,7 @@ public class LevelLoader : MonoBehaviour
     private GameConfiguration _gameConf;
     private InteractionsManager _interactionsManager;
     private EventManager _eventManager;
+    private QuestManager _questManager;
 
     private Dictionary<string, GameObject> _levels;
     private List<BaseSprite> _dynamiclevelObjects;
@@ -44,6 +45,9 @@ public class LevelLoader : MonoBehaviour
         _eventManager = gameObject.AddComponent<EventManager>();
         _eventManager.Initialize();
 
+        _questManager = gameObject.AddComponent<QuestManager>();
+        _questManager.QuestCompleted += OnQuestCompleted;
+
         _pathfinder = GetComponent<Pathfinder2D>();
 
         if (PlayerPrefs.HasKey("SaveGame"))
@@ -67,6 +71,19 @@ public class LevelLoader : MonoBehaviour
         StartCoroutine(LoadLevel(_gameConf.LastLoadedScene));
         PlayerController.transform.MoveObjectTo2D(_gameConf.LastPlayerPosition);
         PlayerController.facing = Vector2.down;
+    }
+
+    private void PushQuest(Quest quest)
+    {
+        _questManager.SetCurrentQuest(quest);
+        _eventManager.RegisterEvents(quest.QuestEvents);
+    }
+
+    private void OnQuestCompleted(Quest obj)
+    {
+        // TODO: Do whatever you need after a finished quest and push the new quest to the manager.
+        _eventManager.UnregisterEvents(obj.QuestEvents);
+        _eventManager.RegisterEvents(obj.NextQuest.QuestEvents);
     }
 
     public IEnumerator LoadLevel(string levelName, bool isTransition = false)
