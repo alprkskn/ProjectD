@@ -135,7 +135,10 @@ namespace ProjectD.Overworld
                 PlayerController.ResetTarget();
             }
 
-            _eventManager.RegisterEvents(_questManager.CurrentQuest.QuestEvents, _currentLevelName);
+            if (_questManager.CurrentQuest != null)
+            {
+                _eventManager.RegisterEvents(_questManager.CurrentQuest.QuestEvents, _currentLevelName);
+            }
         }
 
         public void SaveAndQuit()

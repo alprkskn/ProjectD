@@ -19,6 +19,7 @@ namespace ProjectD.Overworld
             {
                 _shotFlag = true;
                 FireEvent.Invoke(this);
+                Debug.Log("Fire");
             }
         }
     }

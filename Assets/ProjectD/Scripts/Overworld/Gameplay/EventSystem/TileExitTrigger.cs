@@ -14,14 +14,21 @@ namespace ProjectD.Overworld
             _collider = GetComponentInChildren<BoxCollider2D>();
             _collider.isTrigger = true;
 
-            _rigidbody = gameObject.AddComponent<Rigidbody2D>();
+            _rigidbody = GetComponent<Rigidbody2D>();
+
+            if (_rigidbody == null)
+            {
+                _rigidbody = gameObject.AddComponent<Rigidbody2D>();
+            }
+
             _rigidbody.isKinematic = true;
         }
 
-        void OnTriggerEnter2D(Collider2D col)
+        void OnTriggerExit2D(Collider2D col)
         {
             if (col.tag == "Player")
             {
+                Debug.Log("Tile exit trigger fired.");
                 Fire();
             }
         }

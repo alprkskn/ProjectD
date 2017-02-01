@@ -9,8 +9,9 @@ namespace ProjectD.Overworld
         private BoxCollider2D _collider;
         private Rigidbody2D _rigidbody;
 
-        public float Timer { get; private set; }
+        public float Timer;
         private float _activeTimer;
+        private bool _playerIn;
 
         public void Initialize(float timer)
         {
@@ -31,18 +32,21 @@ namespace ProjectD.Overworld
         {
             if(col.tag == "Player")
             {
-
+                Debug.Log("player entered");
+                _playerIn = true;
             }
         }
 
-        void OnTriggerStay2D(Collider2D col)
+        void Update()
         {
-            if(col.tag == "Player")
+            if (_playerIn)
             {
                 _activeTimer += Time.deltaTime;
                 if(_activeTimer >= Timer)
                 {
+                    Debug.Log("Tile stay trigger fired.");
                     Fire();
+                    _activeTimer = 0;
                 }
             }
         }
@@ -51,6 +55,8 @@ namespace ProjectD.Overworld
         {
             if(col.tag == "Player")
             {
+                Debug.Log("Player left");
+                _playerIn = false;
                 _activeTimer = 0f;
             }
         }

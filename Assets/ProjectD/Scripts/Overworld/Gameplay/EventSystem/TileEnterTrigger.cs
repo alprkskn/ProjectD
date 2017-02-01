@@ -22,6 +22,7 @@ namespace ProjectD.Overworld
         {
             if (col.tag == "Player")
             {
+                Debug.Log("Tile enter trigger fired.");
                 Fire();
             }
         }
