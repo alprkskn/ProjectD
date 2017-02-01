@@ -6,7 +6,6 @@ using UnityEngine;
 
 namespace ProjectD.Overworld
 {
-
     public class Trigger : MonoBehaviour
     {
         public event Action<Trigger> FireEvent = delegate { };
@@ -43,20 +42,40 @@ namespace ProjectD.Overworld
         }
     }
 
-    public class Event
+    public enum EventActionType
     {
-        private float _initialTimer;
+        Place, Remove, QuestMessage, Damage, PlayAnim
+    }
 
+    [Serializable]
+    public class EventAction
+    {
+        public EventActionType ActionType;
+
+        public string GOName;
+        public Vector2 Position;
+        public string Message;
+        public float Amount;
+        public string AnimName;
+    }
+
+    public class Event : ScriptableObject
+    {
         public float Timer;
         public string TriggerID;
         public Trigger Trigger;
         public bool Active;
-
-        public List<Action> EventActions;
+        public List<EventAction> EventActions;
     }
 
     public class EventManager : MonoBehaviour
     {
+        public event Action<EventAction> PlaceEvent = delegate { };
+        public event Action<EventAction> RemoveEvent = delegate { };
+        public event Action<EventAction> QuestMessageEvent = delegate { };
+        public event Action<EventAction> DamageEvent = delegate { };
+        public event Action<EventAction> PlayAnimEvent = delegate { };
+
         private Dictionary<string, List<Event>> _registeredEvents;
         private List<Event> _tickingEvents;
 
@@ -159,7 +178,24 @@ namespace ProjectD.Overworld
         {
             foreach (var act in evnt.EventActions)
             {
-                act.Invoke();
+                switch (act.ActionType)
+                {
+                    case EventActionType.Place:
+                        PlaceEvent.Invoke(act);
+                        break;
+                    case EventActionType.Remove:
+                        RemoveEvent.Invoke(act);
+                        break;
+                    case EventActionType.QuestMessage:
+                        QuestMessageEvent.Invoke(act);
+                        break;
+                    case EventActionType.Damage:
+                        DamageEvent.Invoke(act);
+                        break;
+                    case EventActionType.PlayAnim:
+                        PlayAnimEvent.Invoke(act);
+                        break;
+                }
             }
         }
 
