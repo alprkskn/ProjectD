@@ -78,14 +78,14 @@ namespace ProjectD.Overworld
         private void PushQuest(Quest quest)
         {
             _questManager.SetCurrentQuest(quest);
-            _eventManager.RegisterEvents(quest.QuestEvents);
+            _eventManager.RegisterEvents(quest.QuestEvents, _currentLevelName);
         }
 
         private void OnQuestCompleted(Quest obj)
         {
             // TODO: Do whatever you need after a finished quest and push the new quest to the manager.
             _eventManager.UnregisterEvents(obj.QuestEvents);
-            _eventManager.RegisterEvents(obj.NextQuest.QuestEvents);
+            _eventManager.RegisterEvents(obj.NextQuest.QuestEvents, _currentLevelName);
         }
 
         public IEnumerator LoadLevel(string levelName, bool isTransition = false)
@@ -134,6 +134,8 @@ namespace ProjectD.Overworld
                 PlayerController.transform.MoveObjectTo2D(GridUtils.TiledObjectMidPoint(entry));
                 PlayerController.ResetTarget();
             }
+
+            _eventManager.RegisterEvents(_questManager.CurrentQuest.QuestEvents, _currentLevelName);
         }
 
         public void SaveAndQuit()

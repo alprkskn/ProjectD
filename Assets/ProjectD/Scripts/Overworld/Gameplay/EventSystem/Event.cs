@@ -9,36 +9,17 @@ namespace ProjectD.Overworld
     public class Trigger : MonoBehaviour
     {
         public event Action<Trigger> FireEvent = delegate { };
-        private List<Func<bool>> _conditions;
         public bool OneShot;
 
         private bool _shotFlag;
 
-        public void SetConditions(List<Func<bool>> conds)
-        {
-            _conditions = conds;
-        }
-
         public virtual void Fire()
         {
-            FireEvent.Invoke(this);
-        }
-
-        protected virtual void Update()
-        {
-            if (CheckConditions())
+            if (OneShot && !_shotFlag || !OneShot)
             {
-                if (OneShot && !_shotFlag || !OneShot)
-                {
-                    Fire();
-                    _shotFlag = true;
-                }
+                _shotFlag = true;
+                FireEvent.Invoke(this);
             }
-        }
-
-        protected virtual bool CheckConditions()
-        {
-            return _conditions.All(x => x());
         }
     }
 
@@ -63,6 +44,7 @@ namespace ProjectD.Overworld
     {
         public float Timer;
         public string TriggerID;
+        public string SceneID;
         public Trigger Trigger;
         public bool Active;
         public List<EventAction> EventActions;
@@ -122,8 +104,11 @@ namespace ProjectD.Overworld
             }
         }
 
-        public void RegisterEvent(Event e)
+        public void RegisterEvent(Event e, string sceneID)
         {
+            if (e.SceneID != sceneID)
+                return;
+
             e.Active = true;
             if (e.TriggerID != null)
             {
@@ -140,10 +125,13 @@ namespace ProjectD.Overworld
             RefreshTriggers();
         }
 
-        public void RegisterEvents(List<Event> e)
+        public void RegisterEvents(List<Event> e, string sceneID)
         {
             foreach (var evnt in e)
             {
+                if (evnt.SceneID != sceneID)
+                    continue;
+
                 evnt.Active = true;
                 if (evnt.TriggerID != null)
                 {
