@@ -1,0 +1,4 @@
+TileEnterTrigger
+Entry/Scene2
+Scene2Enter
+true

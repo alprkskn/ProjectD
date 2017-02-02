@@ -18,7 +18,26 @@ namespace ProjectD.Overworld
         public event Action<Trigger> FireEvent = delegate { };
         public bool OneShot;
 
+        protected BoxCollider2D _collider;
+        protected Rigidbody2D _rigidbody;
+
         private bool _shotFlag;
+
+        protected virtual void Start()
+        {
+
+            _collider = GetComponentInChildren<BoxCollider2D>();
+            _collider.isTrigger = true;
+
+            _rigidbody = GetComponent<Rigidbody2D>();
+
+            if (_rigidbody == null)
+            {
+                _rigidbody = gameObject.AddComponent<Rigidbody2D>();
+            }
+
+            _rigidbody.isKinematic = true;
+        }
 
         public virtual void Fire()
         {

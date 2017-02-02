@@ -6,18 +6,6 @@ namespace ProjectD.Overworld
 {
     public class TileEnterTrigger : Trigger
     {
-        private BoxCollider2D _collider;
-        private Rigidbody2D _rigidbody;
-        // Use this for initialization
-        void Start()
-        {
-            _collider = GetComponentInChildren<BoxCollider2D>();
-            _collider.isTrigger = true;
-
-            _rigidbody = gameObject.AddComponent<Rigidbody2D>();
-            _rigidbody.isKinematic = true;
-        }
-
         void OnTriggerEnter2D(Collider2D col)
         {
             if (col.tag == "Player")
@@ -25,6 +13,22 @@ namespace ProjectD.Overworld
                 Debug.Log("Tile enter trigger fired.");
                 Fire();
             }
+        }
+
+        public new static TileEnterTrigger Create(string[] lines)
+        {
+            var targetGO = GameObject.Find(lines[1]);
+
+            if(targetGO == null)
+            {
+                Debug.LogErrorFormat("{0} cannot be found in scene.", lines[1]);
+            }
+
+            var trig = targetGO.AddComponent<TileEnterTrigger>();
+            trig.TriggerID = lines[2];
+            trig.OneShot = bool.Parse(lines[3]);
+
+            return trig;
         }
     }
 }

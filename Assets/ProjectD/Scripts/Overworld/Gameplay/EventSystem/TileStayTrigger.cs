@@ -6,9 +6,6 @@ namespace ProjectD.Overworld
 {
     public class TileStayTrigger : Trigger
     {
-        private BoxCollider2D _collider;
-        private Rigidbody2D _rigidbody;
-
         public float Timer;
         private float _activeTimer;
         private bool _playerIn;
@@ -19,14 +16,6 @@ namespace ProjectD.Overworld
         }
 
         // Use this for initialization
-        void Start()
-        {
-            _collider = GetComponentInChildren<BoxCollider2D>();
-            _collider.isTrigger = true;
-
-            _rigidbody = gameObject.AddComponent<Rigidbody2D>();
-            _rigidbody.isKinematic = true;
-        }
 
         void OnTriggerEnter2D(Collider2D col)
         {
@@ -72,8 +61,9 @@ namespace ProjectD.Overworld
 
             var trig = targetGO.AddComponent<TileStayTrigger>();
             trig.TriggerID = lines[2];
+            trig.OneShot = bool.Parse(lines[3]);
 
-            trig.Initialize(float.Parse(lines[3]));
+            trig.Initialize(float.Parse(lines[4]));
 
             return trig;
         }

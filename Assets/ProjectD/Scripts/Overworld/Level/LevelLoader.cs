@@ -191,7 +191,8 @@ namespace ProjectD.Overworld
                 if(trigConf != null)
                 {
                     var lines = trigConf.text.Split('\n').Select(x => x.Replace("\r", "")).ToArray();
-                    Type.GetType(lines[0]).GetMethod("Create").Invoke(null, lines);
+                    var t = Type.GetType("ProjectD.Overworld.TileEnterTrigger");
+                    Type.GetType("ProjectD.Overworld." + lines[0]).GetMethod("Create").Invoke(null, new object[] { lines });
                 }
             }
         }
