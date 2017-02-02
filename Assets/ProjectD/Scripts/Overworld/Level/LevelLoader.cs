@@ -120,7 +120,7 @@ namespace ProjectD.Overworld
 
             SetWarpPoints(go);
             SetSpriteObjects(go);
-            SetSceneTriggers(go);
+            SetSceneTriggers(go, _currentLevelName);
             PopulateInventories(go);
 
             CameraController.SetCameraBounds(new Bounds(new Vector3(_currentLevel.MapWidthInPixels / 2, _currentLevel.MapHeightInPixels / 2, 0), new Vector3(_currentLevel.MapWidthInPixels, _currentLevel.MapHeightInPixels, 10)));
@@ -178,10 +178,22 @@ namespace ProjectD.Overworld
             }
         }
 
-        private void SetSceneTriggers(GameObject level)
+        private void SetSceneTriggers(GameObject level, string levelName)
         {
             // TODO: Decide how you will define triggers on level objects.
             // Create or set the triggers in this  method.
+            var conf = Resources.LoadAll<TextAsset>("GameInfo/Overworld/Triggers/" + levelName);
+
+            if (conf == null) return;
+
+            foreach(var trigConf in conf)
+            {
+                if(trigConf != null)
+                {
+                    var lines = trigConf.text.Split('\n').Select(x => x.Replace("\r", "")).ToArray();
+                    Type.GetType(lines[0]).GetMethod("Create").Invoke(null, lines);
+                }
+            }
         }
 
         private void PopulateInventories(GameObject level)

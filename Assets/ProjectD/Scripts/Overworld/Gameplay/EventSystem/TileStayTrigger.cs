@@ -60,5 +60,22 @@ namespace ProjectD.Overworld
                 _activeTimer = 0f;
             }
         }
+
+        public new static TileStayTrigger Create(string[] lines)
+        {
+            var targetGO = GameObject.Find(lines[1]);
+
+            if(targetGO == null)
+            {
+                Debug.LogErrorFormat("{0} cannot be found in scene.", lines[1]);
+            }
+
+            var trig = targetGO.AddComponent<TileStayTrigger>();
+            trig.TriggerID = lines[2];
+
+            trig.Initialize(float.Parse(lines[3]));
+
+            return trig;
+        }
     }
 }

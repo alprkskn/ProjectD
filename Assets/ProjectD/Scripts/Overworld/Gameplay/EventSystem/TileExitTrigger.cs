@@ -32,5 +32,20 @@ namespace ProjectD.Overworld
                 Fire();
             }
         }
+
+        public new static TileExitTrigger Create(string[] lines)
+        {
+            var targetGO = GameObject.Find(lines[1]);
+
+            if(targetGO == null)
+            {
+                Debug.LogErrorFormat("{0} cannot be found in scene.", lines[1]);
+            }
+
+            var result = targetGO.AddComponent<TileExitTrigger>();
+            result.TriggerID = lines[2];
+
+            return result;
+        }
     }
 }

@@ -6,8 +6,15 @@ using UnityEngine;
 
 namespace ProjectD.Overworld
 {
+
+    public enum TriggerTypes
+    {
+        TileEnter, TileStay, TileExit, PlayerBump, PlayerInteraction
+    }
+
     public class Trigger : MonoBehaviour
     {
+        public string TriggerID;
         public event Action<Trigger> FireEvent = delegate { };
         public bool OneShot;
 
@@ -21,6 +28,11 @@ namespace ProjectD.Overworld
                 FireEvent.Invoke(this);
                 Debug.Log("Fire");
             }
+        }
+
+        public static Trigger Create(string[] conf)
+        {
+            return null;
         }
     }
 
