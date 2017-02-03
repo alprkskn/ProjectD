@@ -1,5 +1,4 @@
 TileStayTrigger
 Entry/Spawn
 SpawnStay_1
-true
 4.6

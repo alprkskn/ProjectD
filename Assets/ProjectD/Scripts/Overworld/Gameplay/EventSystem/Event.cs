@@ -16,12 +16,10 @@ namespace ProjectD.Overworld
     {
         public string TriggerID;
         public event Action<Trigger> FireEvent = delegate { };
-        public bool OneShot;
 
         protected BoxCollider2D _collider;
         protected Rigidbody2D _rigidbody;
 
-        private bool _shotFlag;
 
         protected virtual void Start()
         {
@@ -41,12 +39,7 @@ namespace ProjectD.Overworld
 
         public virtual void Fire()
         {
-            if (OneShot && !_shotFlag || !OneShot)
-            {
-                _shotFlag = true;
-                FireEvent.Invoke(this);
-                Debug.Log("Fire");
-            }
+            FireEvent.Invoke(this);
         }
 
         public static Trigger Create(string[] conf)
@@ -79,6 +72,7 @@ namespace ProjectD.Overworld
         public string SceneID;
         public Trigger Trigger;
         public bool Active;
+        public bool OneShot;
         public List<EventAction> EventActions;
     }
 
@@ -90,6 +84,7 @@ namespace ProjectD.Overworld
         public event Action<EventAction> DamageEvent = delegate { };
         public event Action<EventAction> PlayAnimEvent = delegate { };
 
+        private HashSet<Event> _firedOneShotEvents;
         private Dictionary<string, List<Event>> _registeredEvents;
         private List<Event> _tickingEvents;
 
@@ -97,6 +92,7 @@ namespace ProjectD.Overworld
 
         public void Initialize()
         {
+            _firedOneShotEvents = new HashSet<Event>();
             _registeredEvents = new Dictionary<string, List<Event>>();
             _tickingEvents = new List<Event>();
             _triggers = new Dictionary<string, Trigger>();
@@ -196,6 +192,11 @@ namespace ProjectD.Overworld
 
         private void FireEvent(Event evnt)
         {
+            if(evnt.OneShot && _firedOneShotEvents.Contains(evnt))
+            {
+                return;
+            }
+
             foreach (var act in evnt.EventActions)
             {
                 switch (act.ActionType)

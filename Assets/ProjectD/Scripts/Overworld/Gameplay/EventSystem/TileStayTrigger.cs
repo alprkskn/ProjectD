@@ -61,9 +61,8 @@ namespace ProjectD.Overworld
 
             var trig = targetGO.AddComponent<TileStayTrigger>();
             trig.TriggerID = lines[2];
-            trig.OneShot = bool.Parse(lines[3]);
 
-            trig.Initialize(float.Parse(lines[4]));
+            trig.Initialize(float.Parse(lines[3]));
 
             return trig;
         }

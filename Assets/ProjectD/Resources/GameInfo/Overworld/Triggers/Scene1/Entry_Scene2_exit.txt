@@ -1,4 +1,3 @@
 TileExitTrigger
 Entry/Scene2
 Scene2Exit
-false

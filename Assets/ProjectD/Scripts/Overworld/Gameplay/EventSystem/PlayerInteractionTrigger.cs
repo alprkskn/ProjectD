@@ -27,7 +27,6 @@ namespace ProjectD.Overworld
 
             var trig = targetGO.AddComponent<PlayerInteractionTrigger>();
             trig.TriggerID = lines[2];
-            trig.OneShot = bool.Parse(lines[3]);
 
             var player = GameObject.Find("Player").GetComponent<Player>();
 

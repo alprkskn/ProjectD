@@ -26,7 +26,6 @@ namespace ProjectD.Overworld
 
             var trig = targetGO.AddComponent<TileExitTrigger>();
             trig.TriggerID = lines[2];
-            trig.OneShot = bool.Parse(lines[3]);
 
             return trig;
         }
