@@ -38,14 +38,15 @@ namespace ProjectD.Overworld
 
             PlayerScript = PlayerController.GetComponent<Player>();
 
+            _eventManager = gameObject.AddComponent<EventManager>();
+            _eventManager.Initialize();
+
             _gameConf = gameObject.AddComponent<GameConfiguration>();
-            _gameConf.Initialize();
+            _gameConf.Initialize(_eventManager);
 
             _interactionsManager = gameObject.AddComponent<InteractionsManager>();
             _interactionsManager.InitializeForPlayer(PlayerScript);
 
-            _eventManager = gameObject.AddComponent<EventManager>();
-            _eventManager.Initialize();
 
             _questManager = gameObject.AddComponent<QuestManager>();
             _questManager.QuestCompleted += OnQuestCompleted;

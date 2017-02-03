@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using Event = ProjectD.Overworld.Event;
 
 namespace ProjectD
 {
@@ -17,6 +18,8 @@ namespace ProjectD
 
         private Dictionary<string, GameObject> _items;
         private Dictionary<string, List<BaseItem>> _inventoryStates;
+        private HashSet<string> _shotEventIds;
+        private EventManager _eventManager;
 
         public void ResetPlayerPrefs()
         {
@@ -56,6 +59,18 @@ namespace ProjectD
                 }
             }
 
+            var shotEvents = PlayerPrefs.GetString("ShotEvents").Split(';');
+            _shotEventIds = new HashSet<string>();
+
+            foreach(var id in shotEvents)
+            {
+                if (id.Length > 0)
+                {
+                    _shotEventIds.Add(id);
+                }
+            }
+            _eventManager.SetShotEvents(_shotEventIds);
+
             string[] loc = PlayerPrefs.GetString("PlayerPosition").Split();
             LastPlayerPosition = new Vector2(float.Parse(loc[0]), float.Parse(loc[1]));
             LastLoadedScene = PlayerPrefs.GetString("PlayerScene");
@@ -86,12 +101,15 @@ namespace ProjectD
 
             PlayerPrefs.SetString("PlayerPosition", LastPlayerPosition.x.ToString() + ' ' + LastPlayerPosition.y.ToString());
             PlayerPrefs.SetString("PlayerScene", LastLoadedScene);
+            PlayerPrefs.SetString("ShotEvents", string.Join(",", _shotEventIds.ToArray()));
         }
 
         public void SetupFromInitializationFiles()
         {
             CurrentQuestId = 0;
             _inventoryStates = new Dictionary<string, List<BaseItem>>();
+            _shotEventIds = new HashSet<string>();
+            _eventManager.SetShotEvents(_shotEventIds);
 
             var initialInventoriesFile = Resources.Load<TextAsset>("GameInfo/InitialInventoryStates");
 
@@ -137,10 +155,20 @@ namespace ProjectD
         }
 
         // Use this for initialization
-        public void Initialize()
+        public void Initialize(EventManager eventManager)
         {
+            _eventManager = eventManager;
+            _eventManager.EventFired += OnEventFired;
             PopulateInventoryNames();
             PopulateItems();
+        }
+
+        private void OnEventFired(Event obj)
+        {
+            if (obj.OneShot)
+            {
+                _shotEventIds.Add(obj.EventID);
+            }
         }
 
         // Update is called once per frame

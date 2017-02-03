@@ -68,6 +68,7 @@ namespace ProjectD.Overworld
     public class Event : ScriptableObject
     {
         public float Timer;
+        public string EventID;
         public string TriggerID;
         public string SceneID;
         public Trigger Trigger;
@@ -83,8 +84,9 @@ namespace ProjectD.Overworld
         public event Action<EventAction> QuestMessageEvent = delegate { };
         public event Action<EventAction> DamageEvent = delegate { };
         public event Action<EventAction> PlayAnimEvent = delegate { };
+        public event Action<Event> EventFired = delegate { };
 
-        private HashSet<Event> _firedOneShotEvents;
+        private HashSet<string> _firedOneShotEvents;
         private Dictionary<string, List<Event>> _registeredEvents;
         private List<Event> _tickingEvents;
 
@@ -92,7 +94,7 @@ namespace ProjectD.Overworld
 
         public void Initialize()
         {
-            _firedOneShotEvents = new HashSet<Event>();
+            _firedOneShotEvents = new HashSet<string>();
             _registeredEvents = new Dictionary<string, List<Event>>();
             _tickingEvents = new List<Event>();
             _triggers = new Dictionary<string, Trigger>();
@@ -130,6 +132,11 @@ namespace ProjectD.Overworld
 
                 _tickingEvents.RemoveAt(i);
             }
+        }
+
+        public void SetShotEvents(HashSet<string> shotEvents)
+        {
+            _firedOneShotEvents = new HashSet<string>(shotEvents);
         }
 
         public void RegisterEvent(Event e, string sceneID)
@@ -192,7 +199,7 @@ namespace ProjectD.Overworld
 
         private void FireEvent(Event evnt)
         {
-            if(evnt.OneShot && _firedOneShotEvents.Contains(evnt))
+            if(evnt.OneShot && _firedOneShotEvents.Contains(evnt.EventID))
             {
                 return;
             }
