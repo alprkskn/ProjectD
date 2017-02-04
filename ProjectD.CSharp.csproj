@@ -18,7 +18,6 @@
     <UnityBuildTarget>StandaloneWindows:5</UnityBuildTarget>
     <UnityVersion>5.5.0f3</UnityVersion>
     <RootNamespace></RootNamespace>
-    <LangVersion Condition=" '$(VisualStudioVersion)' != '10.0' ">4</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -52,6 +51,9 @@
     <Reference Include="UnityEngine">
       <HintPath>Library\UnityAssemblies\UnityEngine.dll</HintPath>
     </Reference>
+    <Reference Include="UnityEngine.Advertisements">
+      <HintPath>Library\UnityAssemblies\UnityEngine.Advertisements.dll</HintPath>
+    </Reference>
     <Reference Include="UnityEngine.UI">
       <HintPath>Library\UnityAssemblies\UnityEngine.UI.dll</HintPath>
     </Reference>
@@ -66,6 +68,9 @@
     </Reference>
     <Reference Include="UnityEngine.HoloLens">
       <HintPath>Library\UnityAssemblies\UnityEngine.HoloLens.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.Purchasing">
+      <HintPath>Library\UnityAssemblies\UnityEngine.Purchasing.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.VR">
       <HintPath>Library\UnityAssemblies\UnityEngine.VR.dll</HintPath>
@@ -98,11 +103,28 @@
     <Compile Include="Assets\Pathfinding\Scripts\WaypointListNode.cs" />
     <Compile Include="Assets\Pathfinding\Scripts\WaypointNode.cs" />
     <Compile Include="Assets\Pathfinding\Scripts\WaypointPathfinder.cs" />
-    <Compile Include="Assets\ProjectD\Scripts\Agent.cs" />
-    <Compile Include="Assets\ProjectD\Scripts\GOExtensions.cs" />
-    <Compile Include="Assets\ProjectD\Scripts\LevelLoader.cs" />
-    <Compile Include="Assets\ProjectD\Scripts\RPGCharController.cs" />
-    <Compile Include="Assets\ProjectD\Scripts\WarpPoint.cs" />
+    <Compile Include="Assets\ProjectD\Scripts\Overworld\Camera\OverworldCameraController.cs" />
+    <Compile Include="Assets\ProjectD\Scripts\Overworld\Characters\Agent.cs" />
+    <Compile Include="Assets\ProjectD\Scripts\Overworld\Characters\Player.cs" />
+    <Compile Include="Assets\ProjectD\Scripts\Overworld\Characters\RPGCharController.cs" />
+    <Compile Include="Assets\ProjectD\Scripts\Overworld\Gameplay\BaseItem.cs" />
+    <Compile Include="Assets\ProjectD\Scripts\Overworld\Gameplay\EventSystem\Event.cs" />
+    <Compile Include="Assets\ProjectD\Scripts\Overworld\Gameplay\EventSystem\PlayerBumpTrigger.cs" />
+    <Compile Include="Assets\ProjectD\Scripts\Overworld\Gameplay\EventSystem\PlayerInteractionTrigger.cs" />
+    <Compile Include="Assets\ProjectD\Scripts\Overworld\Gameplay\EventSystem\TileEnterTrigger.cs" />
+    <Compile Include="Assets\ProjectD\Scripts\Overworld\Gameplay\EventSystem\TileExitTrigger.cs" />
+    <Compile Include="Assets\ProjectD\Scripts\Overworld\Gameplay\EventSystem\TileStayTrigger.cs" />
+    <Compile Include="Assets\ProjectD\Scripts\Overworld\Gameplay\GameConfiguration.cs" />
+    <Compile Include="Assets\ProjectD\Scripts\Overworld\Gameplay\Interactive.cs" />
+    <Compile Include="Assets\ProjectD\Scripts\Overworld\Gameplay\Inventory.cs" />
+    <Compile Include="Assets\ProjectD\Scripts\Overworld\Gameplay\ItemInventory.cs" />
+    <Compile Include="Assets\ProjectD\Scripts\Overworld\Gameplay\QuestManager.cs" />
+    <Compile Include="Assets\ProjectD\Scripts\Overworld\GridUtils.cs" />
+    <Compile Include="Assets\ProjectD\Scripts\Overworld\Level\BaseSprite.cs" />
+    <Compile Include="Assets\ProjectD\Scripts\Overworld\Level\InteractionsManager.cs" />
+    <Compile Include="Assets\ProjectD\Scripts\Overworld\Level\LevelLoader.cs" />
+    <Compile Include="Assets\ProjectD\Scripts\Overworld\Level\WarpPoint.cs" />
+    <Compile Include="Assets\ProjectD\Scripts\Utils\GOExtensions.cs" />
     <Compile Include="Assets\Tiled2Unity\Scripts\Runtime\ImportBehaviour.cs" />
     <Compile Include="Assets\Tiled2Unity\Scripts\Runtime\SortingLayerExposed.cs" />
     <Compile Include="Assets\Tiled2Unity\Scripts\Runtime\SpriteDepthInMap.cs" />
@@ -112,6 +134,11 @@
     <Compile Include="Assets\Tiled2Unity\Scripts\Runtime\TiledMap.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Assets\ProjectD\Resources\GameInfo\InitialInventoryStates.txt" />
+    <None Include="Assets\ProjectD\Resources\GameInfo\Inventories.txt" />
+    <None Include="Assets\ProjectD\Resources\GameInfo\Overworld\Triggers\Scene1\Entry_Scene2_enter.txt" />
+    <None Include="Assets\ProjectD\Resources\GameInfo\Overworld\Triggers\Scene1\Entry_Scene2_exit.txt" />
+    <None Include="Assets\ProjectD\Resources\GameInfo\Overworld\Triggers\Scene1\Entry_Spawn.txt" />
     <None Include="Assets\Sprites\Spritesheet\spritesheetInfo.txt" />
     <None Include="Assets\Tiled2Unity\Imported\Scene1.tiled2unity.xml" />
     <None Include="Assets\Tiled2Unity\Imported\Scene2.tiled2unity.xml" />

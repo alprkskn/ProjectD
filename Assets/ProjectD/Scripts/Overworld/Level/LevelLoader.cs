@@ -24,6 +24,8 @@ namespace ProjectD.Overworld
         private List<BaseSprite> _dynamiclevelObjects;
         private TiledMap _currentLevel = null;
         private string _currentLevelName = null;
+		private List<Trigger> _currentLevelTriggers;
+
         private Pathfinder2D _pathfinder;
 
         void Awake()
@@ -104,7 +106,7 @@ namespace ProjectD.Overworld
                 // Move this under the map class as a function if it gets more complex.
                 prevLevel = _currentLevelName;
 
-                _eventManager.RemoveSceneTriggers(_currentLevel.gameObject);
+                _eventManager.RemoveSceneTriggers(_currentLevelTriggers);
                 Destroy(_currentLevel.gameObject);
                 _dynamiclevelObjects.Clear();
             }
@@ -126,7 +128,7 @@ namespace ProjectD.Overworld
 
             CameraController.SetCameraBounds(new Bounds(new Vector3(_currentLevel.MapWidthInPixels / 2, _currentLevel.MapHeightInPixels / 2, 0), new Vector3(_currentLevel.MapWidthInPixels, _currentLevel.MapHeightInPixels, 10)));
             _pathfinder.Create2DMap();
-            _eventManager.AddSceneTriggers(_currentLevel.gameObject);
+            _eventManager.AddSceneTriggers(_currentLevelTriggers);
 
 
             if (isTransition)
@@ -185,6 +187,9 @@ namespace ProjectD.Overworld
             // Create or set the triggers in this  method.
             var conf = Resources.LoadAll<TextAsset>("GameInfo/Overworld/Triggers/" + levelName);
 
+
+			List<Trigger> addedTriggers = new List<Trigger>();
+
             if (conf == null) return;
 
             foreach(var trigConf in conf)
@@ -193,9 +198,12 @@ namespace ProjectD.Overworld
                 {
                     var lines = trigConf.text.Split('\n').Select(x => x.Replace("\r", "")).ToArray();
                     var t = Type.GetType("ProjectD.Overworld.TileEnterTrigger");
-                    Type.GetType("ProjectD.Overworld." + lines[0]).GetMethod("Create").Invoke(null, new object[] { lines });
+                    var trigObject = Type.GetType("ProjectD.Overworld." + lines[0]).GetMethod("Create").Invoke(null, new object[] { lines }) as Trigger;
+					addedTriggers.Add(trigObject);
                 }
             }
+
+			_currentLevelTriggers = addedTriggers;
         }
 
         private void PopulateInventories(GameObject level)
