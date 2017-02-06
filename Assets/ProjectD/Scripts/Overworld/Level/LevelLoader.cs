@@ -42,6 +42,8 @@ namespace ProjectD.Overworld
 
             _eventManager = gameObject.AddComponent<EventManager>();
             _eventManager.Initialize();
+            _eventManager.PlaceEvent += OnPlaceEvent;
+            _eventManager.RemoveEvent += OnRemoveEvent;
 
             _gameConf = gameObject.AddComponent<GameConfiguration>();
             _gameConf.Initialize(_eventManager);
@@ -76,6 +78,16 @@ namespace ProjectD.Overworld
             StartCoroutine(LoadLevel(_gameConf.LastLoadedScene));
             PlayerController.transform.MoveObjectTo2D(_gameConf.LastPlayerPosition);
             PlayerController.facing = Vector2.down;
+        }
+
+        private void OnRemoveEvent(string obj)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void OnPlaceEvent(string arg1, Vector2 arg2)
+        {
+            throw new NotImplementedException();
         }
 
         private void PushQuest(Quest quest)
@@ -159,8 +171,7 @@ namespace ProjectD.Overworld
             _dynamiclevelObjects = new List<BaseSprite>();
             foreach (var sprite in FindObjectsOfType<BaseSprite>())
             {
-                var sr = sprite.SpriteRenderer;
-                sr.sortingOrder = (_currentLevel.MapHeightInPixels / _currentLevel.TileHeight) - (int)(sprite.transform.position.y - sr.bounds.extents.y) / _currentLevel.TileHeight + sprite.Levitation;
+                sprite.SetSortingLayer(_currentLevel);
 
                 if (!sprite.gameObject.isStatic)
                 {
