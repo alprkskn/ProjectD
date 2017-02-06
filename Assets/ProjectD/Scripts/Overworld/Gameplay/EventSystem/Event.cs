@@ -50,7 +50,7 @@ namespace ProjectD.Overworld
 
     public enum EventActionType
     {
-        Place, Remove, QuestMessage, Damage, PlayAnim
+        Place, Remove, QuestMessage, PlayAnim
     }
 
     [Serializable]
@@ -61,7 +61,6 @@ namespace ProjectD.Overworld
         public string GOName;
         public Vector3 Position;
         public string Message;
-        public float Amount;
         public string AnimName;
     }
 
@@ -82,7 +81,6 @@ namespace ProjectD.Overworld
         public event Action<string, Vector3> PlaceEvent = delegate { };
         public event Action<string> RemoveEvent = delegate { };
         public event Action<string> QuestMessageEvent = delegate { };
-        public event Action<string, float> DamageEvent = delegate { };
         public event Action<string, string> PlayAnimEvent = delegate { };
         public event Action<Event> EventFired = delegate { };
 
@@ -228,9 +226,6 @@ namespace ProjectD.Overworld
                         break;
                     case EventActionType.QuestMessage:
                         QuestMessageEvent.Invoke(act.Message);
-                        break;
-                    case EventActionType.Damage:
-                        DamageEvent.Invoke(act.GOName, act.Amount);
                         break;
                     case EventActionType.PlayAnim:
                         PlayAnimEvent.Invoke(act.GOName, act.AnimName);

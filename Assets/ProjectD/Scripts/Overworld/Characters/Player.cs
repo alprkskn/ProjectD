@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace ProjectD.Overworld
 {
-    public class Player : MonoBehaviour
+    public class Player : GameEntity
     {
         public event Action PlayerInteracts = delegate { };
         public event Action<List<IInteractive>> PlayerReachesInteractives = delegate { };

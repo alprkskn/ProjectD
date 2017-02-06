@@ -28,13 +28,14 @@ namespace ProjectD.Overworld
         public event Action<Quest> QuestCompleted = delegate { };
 
         private Quest _currentQuest;
+        private EventManager _eventManager;
 
         public Quest CurrentQuest
         {
             get { return _currentQuest; }
         }
 
-        public void SetString(string message)
+        public void CheckQuestString(string message)
         {
             if (_currentQuest.RequiredActions.ContainsKey(message))
             {
@@ -50,6 +51,12 @@ namespace ProjectD.Overworld
         public void SetCurrentQuest(Quest quest)
         {
             _currentQuest = quest;
+        }
+
+        public void Initialize(EventManager eventManager)
+        {
+            _eventManager = eventManager;
+            _eventManager.QuestMessageEvent += CheckQuestString;
         }
 
         // Use this for initialization

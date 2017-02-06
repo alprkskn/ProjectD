@@ -26,6 +26,7 @@ namespace ProjectD.Overworld
         private string _currentLevelName = null;
         private List<Trigger> _currentLevelTriggers;
         private Transform _currentLevelObjectsLayer;
+        private Transform _currentLevelAgentsLayer;
 
         private Pathfinder2D _pathfinder;
 
@@ -45,6 +46,7 @@ namespace ProjectD.Overworld
             _eventManager.Initialize();
             _eventManager.PlaceEvent += OnPlaceEvent;
             _eventManager.RemoveEvent += OnRemoveEvent;
+            _eventManager.PlayAnimEvent += OnPlayAnimEvent;
 
             _gameConf = gameObject.AddComponent<GameConfiguration>();
             _gameConf.Initialize(_eventManager);
@@ -79,6 +81,14 @@ namespace ProjectD.Overworld
             StartCoroutine(LoadLevel(_gameConf.LastLoadedScene));
             PlayerController.transform.MoveObjectTo2D(_gameConf.LastPlayerPosition);
             PlayerController.facing = Vector2.down;
+        }
+
+        private void OnPlayAnimEvent(string arg1, string arg2)
+        {
+            var target = GameObject.Find(arg1);
+
+            // TODO: Decide how you will set and play the animations.
+            throw new NotImplementedException();
         }
 
         private void OnRemoveEvent(string obj)
@@ -165,6 +175,16 @@ namespace ProjectD.Overworld
             _currentLevelName = levelName;
 
             _currentLevelObjectsLayer = go.transform.Find("Objects").transform;
+            var agentsLayer = GameObject.Find("GameEntities");
+            if(agentsLayer == null)
+            {
+                _currentLevelAgentsLayer = new GameObject("GameEntities").transform;
+                _currentLevelAgentsLayer.SetParent(go.transform, true);
+            }
+            else
+            {
+                _currentLevelAgentsLayer = agentsLayer.transform;
+            }
 
             SetWarpPoints(go);
             SetSpriteObjects(go);
