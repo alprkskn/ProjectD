@@ -24,7 +24,8 @@ namespace ProjectD.Overworld
         private List<BaseSprite> _dynamiclevelObjects;
         private TiledMap _currentLevel = null;
         private string _currentLevelName = null;
-		private List<Trigger> _currentLevelTriggers;
+        private List<Trigger> _currentLevelTriggers;
+        private Transform _currentLevelObjectsLayer;
 
         private Pathfinder2D _pathfinder;
 
@@ -82,12 +83,42 @@ namespace ProjectD.Overworld
 
         private void OnRemoveEvent(string obj)
         {
-            throw new NotImplementedException();
+            var objectToRemove = _currentLevelObjectsLayer.Find(obj);
+
+            if(objectToRemove != null)
+            {
+                if (!objectToRemove.gameObject.isStatic)
+                {
+                    var bs = objectToRemove.GetComponent<BaseSprite>();
+
+                    if(bs != null)
+                    {
+                        _dynamiclevelObjects.Remove(bs);
+                    }
+                }
+
+                GameObject.Destroy(objectToRemove.gameObject);
+            }
         }
 
-        private void OnPlaceEvent(string arg1, Vector2 arg2)
+        private void OnPlaceEvent(string arg1, Vector3 arg2)
         {
-            throw new NotImplementedException();
+            var obj = Resources.Load<GameObject>(arg1);
+
+            var go = Instantiate(obj);
+            go.transform.position = arg2;
+            go.transform.SetParent(_currentLevelObjectsLayer, true);
+
+            var bs = go.GetComponent<BaseSprite>();
+            if (bs != null)
+            {
+                bs.SetSortingLayer(_currentLevel);
+
+                if (!go.isStatic)
+                {
+                    _dynamiclevelObjects.Add(bs);
+                }
+            }
         }
 
         private void PushQuest(Quest quest)
@@ -132,6 +163,8 @@ namespace ProjectD.Overworld
             _currentLevel = tm;
             GridUtils.SetGridTileSize(_currentLevel.TileHeight);
             _currentLevelName = levelName;
+
+            _currentLevelObjectsLayer = go.transform.Find("Objects").transform;
 
             SetWarpPoints(go);
             SetSpriteObjects(go);
@@ -199,22 +232,22 @@ namespace ProjectD.Overworld
             var conf = Resources.LoadAll<TextAsset>("GameInfo/Overworld/Triggers/" + levelName);
 
 
-			List<Trigger> addedTriggers = new List<Trigger>();
+            List<Trigger> addedTriggers = new List<Trigger>();
 
             if (conf == null) return;
 
-            foreach(var trigConf in conf)
+            foreach (var trigConf in conf)
             {
-                if(trigConf != null)
+                if (trigConf != null)
                 {
                     var lines = trigConf.text.Split('\n').Select(x => x.Replace("\r", "")).ToArray();
                     var t = Type.GetType("ProjectD.Overworld.TileEnterTrigger");
                     var trigObject = Type.GetType("ProjectD.Overworld." + lines[0]).GetMethod("Create").Invoke(null, new object[] { lines }) as Trigger;
-					addedTriggers.Add(trigObject);
+                    addedTriggers.Add(trigObject);
                 }
             }
 
-			_currentLevelTriggers = addedTriggers;
+            _currentLevelTriggers = addedTriggers;
         }
 
         private void PopulateInventories(GameObject level)

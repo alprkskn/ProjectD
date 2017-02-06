@@ -59,7 +59,7 @@ namespace ProjectD.Overworld
         public EventActionType ActionType;
 
         public string GOName;
-        public Vector2 Position;
+        public Vector3 Position;
         public string Message;
         public float Amount;
         public string AnimName;
@@ -79,7 +79,7 @@ namespace ProjectD.Overworld
 
     public class EventManager : MonoBehaviour
     {
-        public event Action<string, Vector2> PlaceEvent = delegate { };
+        public event Action<string, Vector3> PlaceEvent = delegate { };
         public event Action<string> RemoveEvent = delegate { };
         public event Action<string> QuestMessageEvent = delegate { };
         public event Action<string, float> DamageEvent = delegate { };
