@@ -79,11 +79,11 @@ namespace ProjectD.Overworld
 
     public class EventManager : MonoBehaviour
     {
-        public event Action<EventAction> PlaceEvent = delegate { };
-        public event Action<EventAction> RemoveEvent = delegate { };
-        public event Action<EventAction> QuestMessageEvent = delegate { };
-        public event Action<EventAction> DamageEvent = delegate { };
-        public event Action<EventAction> PlayAnimEvent = delegate { };
+        public event Action<string, Vector2> PlaceEvent = delegate { };
+        public event Action<string> RemoveEvent = delegate { };
+        public event Action<string> QuestMessageEvent = delegate { };
+        public event Action<string, float> DamageEvent = delegate { };
+        public event Action<string, string> PlayAnimEvent = delegate { };
         public event Action<Event> EventFired = delegate { };
 
         private HashSet<string> _firedOneShotEvents;
@@ -221,19 +221,19 @@ namespace ProjectD.Overworld
                 switch (act.ActionType)
                 {
                     case EventActionType.Place:
-                        PlaceEvent.Invoke(act);
+                        PlaceEvent.Invoke(act.GOName, act.Position);
                         break;
                     case EventActionType.Remove:
-                        RemoveEvent.Invoke(act);
+                        RemoveEvent.Invoke(act.GOName);
                         break;
                     case EventActionType.QuestMessage:
-                        QuestMessageEvent.Invoke(act);
+                        QuestMessageEvent.Invoke(act.Message);
                         break;
                     case EventActionType.Damage:
-                        DamageEvent.Invoke(act);
+                        DamageEvent.Invoke(act.GOName, act.Amount);
                         break;
                     case EventActionType.PlayAnim:
-                        PlayAnimEvent.Invoke(act);
+                        PlayAnimEvent.Invoke(act.GOName, act.AnimName);
                         break;
                 }
             }
