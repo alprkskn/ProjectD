@@ -78,6 +78,8 @@ namespace ProjectD.Overworld
             {
                 _gameConf.SetupFromInitializationFiles();
             }
+
+
             StartCoroutine(LoadLevel(_gameConf.LastLoadedScene));
             PlayerController.transform.MoveObjectTo2D(_gameConf.LastPlayerPosition);
             PlayerController.facing = Vector2.down;
@@ -95,13 +97,13 @@ namespace ProjectD.Overworld
         {
             var objectToRemove = _currentLevelObjectsLayer.Find(obj);
 
-            if(objectToRemove != null)
+            if (objectToRemove != null)
             {
                 if (!objectToRemove.gameObject.isStatic)
                 {
                     var bs = objectToRemove.GetComponent<BaseSprite>();
 
-                    if(bs != null)
+                    if (bs != null)
                     {
                         _dynamiclevelObjects.Remove(bs);
                     }
@@ -142,6 +144,7 @@ namespace ProjectD.Overworld
             // TODO: Do whatever you need after a finished quest and push the new quest to the manager.
             _eventManager.UnregisterEvents(obj.QuestEvents);
             _eventManager.RegisterEvents(obj.NextQuest.QuestEvents, _currentLevelName);
+            _gameConf.CurrentQuestId = obj.name;
         }
 
         public IEnumerator LoadLevel(string levelName, bool isTransition = false)
@@ -176,7 +179,7 @@ namespace ProjectD.Overworld
 
             _currentLevelObjectsLayer = go.transform.Find("Objects").transform;
             var agentsLayer = GameObject.Find("GameEntities");
-            if(agentsLayer == null)
+            if (agentsLayer == null)
             {
                 _currentLevelAgentsLayer = new GameObject("GameEntities").transform;
                 _currentLevelAgentsLayer.SetParent(go.transform, true);
@@ -206,6 +209,14 @@ namespace ProjectD.Overworld
             if (_questManager.CurrentQuest != null)
             {
                 _eventManager.RegisterEvents(_questManager.CurrentQuest.QuestEvents, _currentLevelName);
+            }
+            else
+            {
+                if (_gameConf.CurrentQuestId != null)
+                {
+                    var quest = Resources.Load<Quest>("GameInfo/Overworld/Quests/" + _gameConf.CurrentQuestId);
+                    PushQuest(quest);
+                }
             }
         }
 

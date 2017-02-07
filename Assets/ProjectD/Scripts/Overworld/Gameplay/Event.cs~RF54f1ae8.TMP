@@ -7,34 +7,17 @@ using UnityEngine;
 namespace ProjectD.Overworld
 {
 
-    public enum TriggerTypes
-    {
-        TileEnter, TileStay, TileExit, PlayerBump, PlayerInteraction
-    }
-
     public class Trigger : MonoBehaviour
     {
-        public string TriggerID;
         public event Action<Trigger> FireEvent = delegate { };
+        private List<Func<bool>> _conditions;
+        public bool OneShot;
 
-        protected BoxCollider2D _collider;
-        protected Rigidbody2D _rigidbody;
+        private bool _shotFlag;
 
-
-        protected virtual void Start()
+        public void SetConditions(List<Func<bool>> conds)
         {
-
-            _collider = GetComponentInChildren<BoxCollider2D>();
-            _collider.isTrigger = true;
-
-            _rigidbody = GetComponent<Rigidbody2D>();
-
-            if (_rigidbody == null)
-            {
-                _rigidbody = gameObject.AddComponent<Rigidbody2D>();
-            }
-
-            _rigidbody.isKinematic = true;
+            _conditions = conds;
         }
 
         public virtual void Fire()
@@ -42,15 +25,27 @@ namespace ProjectD.Overworld
             FireEvent.Invoke(this);
         }
 
-        public static Trigger Create(string[] conf)
+        protected virtual void Update()
         {
-            return null;
+            if (CheckConditions())
+            {
+                if (OneShot && !_shotFlag || !OneShot)
+                {
+                    Fire();
+                    _shotFlag = true;
+                }
+            }
+        }
+
+        protected virtual bool CheckConditions()
+        {
+            return _conditions.All(x => x());
         }
     }
 
     public enum EventActionType
     {
-        Place, Remove, QuestMessage, PlayAnim
+        Place, Remove, QuestMessage, Damage, PlayAnim
     }
 
     [Serializable]
@@ -59,33 +54,32 @@ namespace ProjectD.Overworld
         public EventActionType ActionType;
 
         public string GOName;
-        public Vector3 Position;
+        public Vector2 Position;
         public string Message;
+        public float Amount;
         public string AnimName;
     }
 
-    [Serializable]
-    public class Event
+    public class Event : ScriptableObject
     {
+        private float _initialTimer;
+
         public float Timer;
-        public string EventID;
         public string TriggerID;
-        public string SceneID;
         public Trigger Trigger;
         public bool Active;
-        public bool OneShot;
+
         public List<EventAction> EventActions;
     }
 
     public class EventManager : MonoBehaviour
     {
-        public event Action<string, Vector3> PlaceEvent = delegate { };
-        public event Action<string> RemoveEvent = delegate { };
-        public event Action<string> QuestMessageEvent = delegate { };
-        public event Action<string, string> PlayAnimEvent = delegate { };
-        public event Action<Event> EventFired = delegate { };
+        public event Action<EventAction> PlaceEvent = delegate { };
+        public event Action<EventAction> RemoveEvent = delegate { };
+        public event Action<EventAction> QuestMessageEvent = delegate { };
+        public event Action<EventAction> DamageEvent = delegate { };
+        public event Action<EventAction> PlayAnimEvent = delegate { };
 
-        private HashSet<string> _firedOneShotEvents;
         private Dictionary<string, List<Event>> _registeredEvents;
         private List<Event> _tickingEvents;
 
@@ -93,7 +87,6 @@ namespace ProjectD.Overworld
 
         public void Initialize()
         {
-            _firedOneShotEvents = new HashSet<string>();
             _registeredEvents = new Dictionary<string, List<Event>>();
             _tickingEvents = new List<Event>();
             _triggers = new Dictionary<string, Trigger>();
@@ -106,26 +99,14 @@ namespace ProjectD.Overworld
             // TODO: Perhaps use ScriptableObjects to add globaltriggers.
         }
 
-        public void RemoveSceneTriggers(List<Trigger> sceneTriggers)
+        public void RemoveSceneTriggers(GameObject scene)
         {
             // TODO: Clear old scene bound triggers before unloading a scene.
-			foreach(var trig in sceneTriggers)
-			{
-				if (_triggers.ContainsKey(trig.TriggerID))
-				{
-					_triggers.Remove(trig.TriggerID);
-				}
-			}
         }
 
-        public void AddSceneTriggers(List<Trigger> sceneTiggers)
+        public void AddSceneTriggers(GameObject scene)
         {
             // TODO: Add new triggers that come with the new scene.
-			foreach(var trig in sceneTiggers)
-			{
-				_triggers.Add(trig.TriggerID, trig);
-			}
-
             RefreshTriggers();
         }
 
@@ -145,16 +126,8 @@ namespace ProjectD.Overworld
             }
         }
 
-        public void SetShotEvents(HashSet<string> shotEvents)
+        public void RegisterEvent(Event e)
         {
-            _firedOneShotEvents = new HashSet<string>(shotEvents);
-        }
-
-        public void RegisterEvent(Event e, string sceneID)
-        {
-            if (e.SceneID != sceneID)
-                return;
-
             e.Active = true;
             if (e.TriggerID != null)
             {
@@ -171,13 +144,10 @@ namespace ProjectD.Overworld
             RefreshTriggers();
         }
 
-        public void RegisterEvents(List<Event> e, string sceneID)
+        public void RegisterEvents(List<Event> e)
         {
             foreach (var evnt in e)
             {
-                if (evnt.SceneID != sceneID)
-                    continue;
-
                 evnt.Active = true;
                 if (evnt.TriggerID != null)
                 {
@@ -210,26 +180,24 @@ namespace ProjectD.Overworld
 
         private void FireEvent(Event evnt)
         {
-            if(evnt.OneShot && _firedOneShotEvents.Contains(evnt.EventID))
-            {
-                return;
-            }
-
             foreach (var act in evnt.EventActions)
             {
                 switch (act.ActionType)
                 {
                     case EventActionType.Place:
-                        PlaceEvent.Invoke(act.GOName, act.Position);
+                        PlaceEvent.Invoke(act);
                         break;
                     case EventActionType.Remove:
-                        RemoveEvent.Invoke(act.GOName);
+                        RemoveEvent.Invoke(act);
                         break;
                     case EventActionType.QuestMessage:
-                        QuestMessageEvent.Invoke(act.Message);
+                        QuestMessageEvent.Invoke(act);
+                        break;
+                    case EventActionType.Damage:
+                        DamageEvent.Invoke(act);
                         break;
                     case EventActionType.PlayAnim:
-                        PlayAnimEvent.Invoke(act.GOName, act.AnimName);
+                        PlayAnimEvent.Invoke(act);
                         break;
                 }
             }

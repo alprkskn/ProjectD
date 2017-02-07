@@ -10,7 +10,7 @@ namespace ProjectD
 
     public class GameConfiguration : MonoBehaviour
     {
-        public int CurrentQuestId;
+        public string CurrentQuestId;
         public List<string> InventoryNames;
 
         public Vector2 LastPlayerPosition;
@@ -30,7 +30,7 @@ namespace ProjectD
         {
             if (PlayerPrefs.HasKey("CurrentQuest"))
             {
-                CurrentQuestId = PlayerPrefs.GetInt("CurrentQuest");
+                CurrentQuestId = PlayerPrefs.GetString("CurrentQuest");
             }
 
             _inventoryStates = new Dictionary<string, List<BaseItem>>();
@@ -79,7 +79,7 @@ namespace ProjectD
         public void SaveToPlayerPrefs(Inventory playerInventory)
         {
             PlayerPrefs.SetInt("SaveGame", 1);
-            PlayerPrefs.SetInt("CurrentQuest", CurrentQuestId);
+            PlayerPrefs.SetString("CurrentQuest", CurrentQuestId);
 
             foreach (var name in InventoryNames)
             {
@@ -106,7 +106,7 @@ namespace ProjectD
 
         public void SetupFromInitializationFiles()
         {
-            CurrentQuestId = 0;
+            CurrentQuestId = "01_Quest";
             _inventoryStates = new Dictionary<string, List<BaseItem>>();
             _shotEventIds = new HashSet<string>();
             _eventManager.SetShotEvents(_shotEventIds);

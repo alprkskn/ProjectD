@@ -6,23 +6,6 @@ using UnityEngine;
 
 namespace ProjectD.Overworld
 {
-
-    public class Quest
-    {
-        public string Brief;
-        public string Description;
-
-        public Dictionary<string, bool> RequiredActions;
-        public List<Event> QuestEvents;
-
-        public Quest NextQuest;
-
-        public bool CheckFinished()
-        {
-            return RequiredActions.All(x => x.Value);
-        }
-    }
-
     public class QuestManager : MonoBehaviour
     {
         public event Action<Quest> QuestCompleted = delegate { };
@@ -37,9 +20,10 @@ namespace ProjectD.Overworld
 
         public void CheckQuestString(string message)
         {
-            if (_currentQuest.RequiredActions.ContainsKey(message))
+            if (_currentQuest.RequiredActions.Any(x => x.ActionMessage == message))
             {
-                _currentQuest.RequiredActions[message] = true;
+                var tuple = _currentQuest.RequiredActions.Find(x => x.ActionMessage == message);
+                tuple.IsDone = true;
                 if (_currentQuest.CheckFinished())
                 {
                     QuestCompleted.Invoke(_currentQuest);
