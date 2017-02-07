@@ -56,6 +56,7 @@ namespace ProjectD.Overworld
 
 
             _questManager = gameObject.AddComponent<QuestManager>();
+            _questManager.Initialize(_eventManager);
             _questManager.QuestCompleted += OnQuestCompleted;
 
             _pathfinder = GetComponent<Pathfinder2D>();
@@ -118,6 +119,7 @@ namespace ProjectD.Overworld
             var obj = Resources.Load<GameObject>(arg1);
 
             var go = Instantiate(obj);
+            go.name = go.name.Replace("(Clone)", "");
             go.transform.position = arg2;
             go.transform.SetParent(_currentLevelObjectsLayer, true);
 
@@ -143,7 +145,6 @@ namespace ProjectD.Overworld
         {
             // TODO: Do whatever you need after a finished quest and push the new quest to the manager.
             _eventManager.UnregisterEvents(obj.QuestEvents);
-            _eventManager.RegisterEvents(obj.NextQuest.QuestEvents, _currentLevelName);
             _gameConf.CurrentQuestId = obj.name;
         }
 

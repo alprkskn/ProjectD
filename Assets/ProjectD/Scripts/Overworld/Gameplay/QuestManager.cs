@@ -34,7 +34,7 @@ namespace ProjectD.Overworld
 
         public void SetCurrentQuest(Quest quest)
         {
-            _currentQuest = quest;
+            _currentQuest = Instantiate(quest);
         }
 
         public void Initialize(EventManager eventManager)

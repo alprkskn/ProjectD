@@ -54,7 +54,7 @@ namespace ProjectD.Overworld
     }
 
     [Serializable]
-    public class EventAction
+    public struct EventAction
     {
         public EventActionType ActionType;
 
@@ -65,7 +65,7 @@ namespace ProjectD.Overworld
     }
 
     [Serializable]
-    public class Event
+    public struct Event
     {
         public float Timer;
         public string EventID;
@@ -88,6 +88,7 @@ namespace ProjectD.Overworld
         private HashSet<string> _firedOneShotEvents;
         private Dictionary<string, List<Event>> _registeredEvents;
         private List<Event> _tickingEvents;
+        private List<float> _tickingEventTimers;
 
         private Dictionary<string, Trigger> _triggers;
 
@@ -96,6 +97,7 @@ namespace ProjectD.Overworld
             _firedOneShotEvents = new HashSet<string>();
             _registeredEvents = new Dictionary<string, List<Event>>();
             _tickingEvents = new List<Event>();
+            _tickingEventTimers = new List<float>();
             _triggers = new Dictionary<string, Trigger>();
 
             InitializeGlobalTriggers();
@@ -134,14 +136,17 @@ namespace ProjectD.Overworld
             for (int i = _tickingEvents.Count - 1; i >= 0; i--)
             {
                 var evnt = _tickingEvents[i];
-                evnt.Timer -= Time.deltaTime;
+                _tickingEventTimers[i] -= Time.deltaTime;
+                //evnt.Timer -= Time.deltaTime;
 
-                if (evnt.Timer <= 0)
+                if (_tickingEventTimers[i] <= 0)
                 {
+                    Debug.Log("Fired Event!");
                     FireEvent(evnt);
+                    _tickingEvents.RemoveAt(i);
+                    _tickingEventTimers.RemoveAt(i);
                 }
 
-                _tickingEvents.RemoveAt(i);
             }
         }
 
@@ -167,19 +172,21 @@ namespace ProjectD.Overworld
             else
             {
                 _tickingEvents.Add(e);
+                _tickingEventTimers.Add(e.Timer);
             }
             RefreshTriggers();
         }
 
         public void RegisterEvents(List<Event> e, string sceneID)
         {
-            foreach (var evnt in e)
+            for(int i=0; i<e.Count; i++)
             {
+                var evnt = e[i];
                 if (evnt.SceneID != sceneID)
                     continue;
 
                 evnt.Active = true;
-                if (evnt.TriggerID != null)
+                if (evnt.TriggerID != null && evnt.TriggerID != "")
                 {
                     if (!_registeredEvents.ContainsKey(evnt.TriggerID))
                     {
@@ -190,6 +197,7 @@ namespace ProjectD.Overworld
                 else
                 {
                     _tickingEvents.Add(evnt);
+                    _tickingEventTimers.Add(evnt.Timer);
                 }
             }
             RefreshTriggers();
@@ -202,17 +210,25 @@ namespace ProjectD.Overworld
                 pair.Value.RemoveAll(x => e.Contains(x));
             }
 
-            foreach (var evnt in e)
+            for(int i=0; i<e.Count; i++)
             {
+                var evnt = e[i];
                 evnt.Active = false;
             }
         }
 
         private void FireEvent(Event evnt)
         {
-            if(evnt.OneShot && _firedOneShotEvents.Contains(evnt.EventID))
+            if(evnt.OneShot) 
             {
-                return;
+                if (_firedOneShotEvents.Contains(evnt.EventID))
+                {
+                    return;
+                }
+                else
+                {
+                    _firedOneShotEvents.Add(evnt.EventID);
+                }
             }
 
             foreach (var act in evnt.EventActions)
@@ -239,8 +255,9 @@ namespace ProjectD.Overworld
         {
             foreach (var pair in _registeredEvents)
             {
-                foreach (var e in pair.Value)
+                for(int i = 0; i<pair.Value.Count; i++)
                 {
+                    var e = pair.Value[i];
                     if (_triggers.ContainsKey(pair.Key))
                     {
                         if (e.Trigger == null)
@@ -252,6 +269,7 @@ namespace ProjectD.Overworld
                                 if (e.Active)
                                 {
                                     _tickingEvents.Add(e);
+                                    _tickingEventTimers.Add(e.Timer);
                                     _registeredEvents[pair.Key].Remove(e);
                                 }
                             };

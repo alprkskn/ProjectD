@@ -1,0 +1,3 @@
+PlayerInteractionTrigger
+Objects/OneByTwoTable
+TableInventoryAccess

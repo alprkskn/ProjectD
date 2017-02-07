@@ -7,7 +7,7 @@ using UnityEngine;
 namespace ProjectD.Overworld
 {
     [Serializable]
-    public struct RequiredActionsTuple
+    public class RequiredActionsTuple
     {
         public string ActionMessage;
         public bool IsDone;
