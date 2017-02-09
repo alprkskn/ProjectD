@@ -35,7 +35,9 @@ namespace ProjectD.Overworld
 
         public void SetCurrentQuest(Quest quest)
         {
-            _currentQuest = Instantiate(quest);
+			var q = Instantiate(quest);
+			q.name = q.name.Replace("(Clone)", "");
+            _currentQuest = q;
         }
 
         public void Initialize(EventManager eventManager)

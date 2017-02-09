@@ -48,7 +48,7 @@ namespace ProjectD.Overworld
             _eventManager.RemoveEvent += OnRemoveEvent;
             _eventManager.PlayAnimEvent += OnPlayAnimEvent;
 
-            _gameConf = gameObject.AddComponent<GameConfiguration>();
+			_gameConf = new GameConfiguration();
             _gameConf.Initialize(_eventManager);
 
             _interactionsManager = gameObject.AddComponent<InteractionsManager>();
@@ -65,7 +65,8 @@ namespace ProjectD.Overworld
             {
                 try
                 {
-                    _gameConf.SetupFromPlayerPrefs(PlayerScript.GetComponent<Inventory>());
+                    _gameConf.SetupFromPlayerPrefs();
+					_gameConf.InitializePlayerItems(PlayerScript.GetComponent<Inventory>());
                 }
                 catch (Exception e)
                 {
@@ -145,7 +146,7 @@ namespace ProjectD.Overworld
         {
             // TODO: Do whatever you need after a finished quest and push the new quest to the manager.
             _eventManager.UnregisterEvents(obj.QuestEvents);
-            _gameConf.CurrentQuestId = obj.name;
+            _gameConf.CurrentQuestId = obj.NextQuest.name;
         }
 
         public IEnumerator LoadLevel(string levelName, bool isTransition = false)
@@ -215,6 +216,7 @@ namespace ProjectD.Overworld
             {
                 if (_gameConf.CurrentQuestId != null)
                 {
+					Debug.Log(_gameConf.CurrentQuestId);
                     var quest = Resources.Load<Quest>("GameInfo/Overworld/Quests/" + _gameConf.CurrentQuestId);
                     PushQuest(quest);
                 }

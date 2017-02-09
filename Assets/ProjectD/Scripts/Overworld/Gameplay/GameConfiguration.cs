@@ -1,4 +1,5 @@
 ﻿using ProjectD.Overworld;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,8 +8,8 @@ using Event = ProjectD.Overworld.Event;
 
 namespace ProjectD
 {
-
-    public class GameConfiguration : MonoBehaviour
+	[Serializable]
+    public class GameConfiguration
     {
         public string CurrentQuestId;
         public List<string> InventoryNames;
@@ -16,17 +17,20 @@ namespace ProjectD
         public Vector2 LastPlayerPosition;
         public string LastLoadedScene;
 
-        private Dictionary<string, GameObject> _items;
+		[SerializeField]
         private Dictionary<string, List<BaseItem>> _inventoryStates;
+		[SerializeField]
         private HashSet<string> _shotEventIds;
+
         private EventManager _eventManager;
+        private Dictionary<string, GameObject> _items;
 
         public void ResetPlayerPrefs()
         {
             PlayerPrefs.DeleteKey("SaveGame");
         }
 
-        public void SetupFromPlayerPrefs(Inventory playerInventory)
+        public void SetupFromPlayerPrefs()
         {
             if (PlayerPrefs.HasKey("CurrentQuest"))
             {
@@ -48,17 +52,6 @@ namespace ProjectD
                     }
                 }
             }
-
-            var playerItems = PlayerPrefs.GetString("I:Player").Split(';');
-
-            foreach (var item in playerItems)
-            {
-                if (item.Length > 0)
-                {
-                    playerInventory.AddItem(_items[item].GetComponentInChildren<BaseItem>());
-                }
-            }
-
             var shotEvents = PlayerPrefs.GetString("ShotEvents").Split(';');
             _shotEventIds = new HashSet<string>();
 
@@ -75,6 +68,19 @@ namespace ProjectD
             LastPlayerPosition = new Vector2(float.Parse(loc[0]), float.Parse(loc[1]));
             LastLoadedScene = PlayerPrefs.GetString("PlayerScene");
         }
+
+		public void InitializePlayerItems(Inventory playerInventory)
+		{
+            var playerItems = PlayerPrefs.GetString("I:Player").Split(';');
+
+            foreach (var item in playerItems)
+            {
+                if (item.Length > 0)
+                {
+                    playerInventory.AddItem(_items[item].GetComponentInChildren<BaseItem>());
+                }
+            }
+		}
 
         public void SaveToPlayerPrefs(Inventory playerInventory)
         {
@@ -169,12 +175,6 @@ namespace ProjectD
             {
                 _shotEventIds.Add(obj.EventID);
             }
-        }
-
-        // Update is called once per frame
-        void Update()
-        {
-
         }
 
         private void PopulateInventoryNames()
