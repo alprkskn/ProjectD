@@ -266,6 +266,7 @@ namespace ProjectD.Overworld
                         break;
                 }
             }
+			EventFired.Invoke(evnt);
         }
 
         private void RefreshTriggers()

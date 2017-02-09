@@ -107,7 +107,7 @@ namespace ProjectD
 
             PlayerPrefs.SetString("PlayerPosition", LastPlayerPosition.x.ToString() + ' ' + LastPlayerPosition.y.ToString());
             PlayerPrefs.SetString("PlayerScene", LastLoadedScene);
-            PlayerPrefs.SetString("ShotEvents", string.Join(",", _shotEventIds.ToArray()));
+            PlayerPrefs.SetString("ShotEvents", string.Join(";", _shotEventIds.ToArray()));
         }
 
         public void SetupFromInitializationFiles()
