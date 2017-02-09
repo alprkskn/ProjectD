@@ -54,9 +54,6 @@
     <Reference Include="UnityEditor">
       <HintPath>Library\UnityAssemblies\UnityEditor.dll</HintPath>
     </Reference>
-    <Reference Include="UnityEngine.Advertisements">
-      <HintPath>Library\UnityAssemblies\UnityEngine.Advertisements.dll</HintPath>
-    </Reference>
     <Reference Include="UnityEditor.Advertisements">
       <HintPath>Library\UnityAssemblies\UnityEditor.Advertisements.dll</HintPath>
     </Reference>
@@ -98,9 +95,6 @@
     </Reference>
     <Reference Include="UnityEngine.HoloLens">
       <HintPath>Library\UnityAssemblies\UnityEngine.HoloLens.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEngine.Purchasing">
-      <HintPath>Library\UnityAssemblies\UnityEngine.Purchasing.dll</HintPath>
     </Reference>
     <Reference Include="UnityEditor.VR">
       <HintPath>Library\UnityAssemblies\UnityEditor.VR.dll</HintPath>
@@ -146,11 +140,15 @@
     <Compile Include="Assets\Tiled2Unity\Scripts\Editor\TiledAssetPostProcessor.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Assets\Outline-Effect\Resources\OutlineBufferShader.shader" />
+    <None Include="Assets\Outline-Effect\Resources\OutlineShader.shader" />
+    <None Include="Assets\Outline-Effect2\Resources\SpriteOutline.shader" />
     <None Include="Assets\ProjectD\Resources\GameInfo\InitialInventoryStates.txt" />
     <None Include="Assets\ProjectD\Resources\GameInfo\Inventories.txt" />
     <None Include="Assets\ProjectD\Resources\GameInfo\Overworld\Triggers\Scene1\Entry_Scene2_enter.txt" />
     <None Include="Assets\ProjectD\Resources\GameInfo\Overworld\Triggers\Scene1\Entry_Scene2_exit.txt" />
     <None Include="Assets\ProjectD\Resources\GameInfo\Overworld\Triggers\Scene1\Entry_Spawn.txt" />
+    <None Include="Assets\ProjectD\Resources\GameInfo\Overworld\Triggers\Scene1\Objects_OneByTwoTable_Interact.txt" />
     <None Include="Assets\Sprites\Spritesheet\spritesheetInfo.txt" />
     <None Include="Assets\Tiled2Unity\Imported\Scene1.tiled2unity.xml" />
     <None Include="Assets\Tiled2Unity\Imported\Scene2.tiled2unity.xml" />

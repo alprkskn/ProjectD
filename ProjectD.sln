@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2015
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "projectd", "projectd.csproj", "{53FF128B-F6FB-599A-1BFF-1B37DC9333C3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProjectD.CSharp", "ProjectD.CSharp.csproj", "{7B71BDCA-479E-488A-94F8-F6FEA9F20A62}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "projectd.Editor", "projectd.Editor.csproj", "{16457BB5-BB59-9984-E9B0-2F621A53300D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProjectD.CSharp.Editor", "ProjectD.CSharp.Editor.csproj", "{BD6213C5-F455-54DF-368D-BD0333B5D28E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,14 +11,14 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{53FF128B-F6FB-599A-1BFF-1B37DC9333C3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{53FF128B-F6FB-599A-1BFF-1B37DC9333C3}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{53FF128B-F6FB-599A-1BFF-1B37DC9333C3}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{53FF128B-F6FB-599A-1BFF-1B37DC9333C3}.Release|Any CPU.Build.0 = Release|Any CPU
-		{16457BB5-BB59-9984-E9B0-2F621A53300D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{16457BB5-BB59-9984-E9B0-2F621A53300D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{16457BB5-BB59-9984-E9B0-2F621A53300D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{16457BB5-BB59-9984-E9B0-2F621A53300D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7B71BDCA-479E-488A-94F8-F6FEA9F20A62}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7B71BDCA-479E-488A-94F8-F6FEA9F20A62}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7B71BDCA-479E-488A-94F8-F6FEA9F20A62}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7B71BDCA-479E-488A-94F8-F6FEA9F20A62}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BD6213C5-F455-54DF-368D-BD0333B5D28E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BD6213C5-F455-54DF-368D-BD0333B5D28E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BD6213C5-F455-54DF-368D-BD0333B5D28E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BD6213C5-F455-54DF-368D-BD0333B5D28E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

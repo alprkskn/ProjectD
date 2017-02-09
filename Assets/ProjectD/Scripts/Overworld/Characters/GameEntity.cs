@@ -1,10 +1,11 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace ProjectD.Overworld
 {
-    public class GameEntity : MonoBehaviour
+    public class GameEntity : MonoBehaviour, IInteractive
     {
         [SerializeField]
         private float MaxHealth;
@@ -18,7 +19,11 @@ namespace ProjectD.Overworld
             }
         }
 
-        public float Hurt(float amount)
+		public void Highlight(bool on)
+		{
+		}
+
+		public float Hurt(float amount)
         {
             _health -= amount;
 
@@ -31,8 +36,18 @@ namespace ProjectD.Overworld
             return _health;
         }
 
-        // Use this for initialization
-        void Start()
+		public void Interact(GameObject player)
+		{
+			Debug.Log("Woo Woo interaction");
+		}
+
+		public string Tooltip()
+		{
+			throw new NotImplementedException();
+		}
+
+		// Use this for initialization
+		void Start()
         {
 
         }
