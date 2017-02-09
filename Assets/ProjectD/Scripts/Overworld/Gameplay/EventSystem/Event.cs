@@ -155,6 +155,23 @@ namespace ProjectD.Overworld
             _firedOneShotEvents = new HashSet<string>(shotEvents);
         }
 
+		public void LoadSceneEvents(string sceneID)
+		{
+			var evnts = Resources.LoadAll<EventData>("GameInfo/Overworld/Events/" + sceneID);
+
+			foreach(var eData in evnts)
+			{
+				var e = new Event();
+				e.Timer = eData.Timer;
+				e.EventID = eData.EventID;
+				e.OneShot = eData.OneShot;
+				e.SceneID = eData.SceneID;
+				e.TriggerID = eData.TriggerID;
+				e.EventActions = new List<EventAction>(eData.EventActions);
+				RegisterEvent(e, sceneID);
+			}
+		}
+
         public void RegisterEvent(Event e, string sceneID)
         {
             if (e.SceneID != sceneID)

@@ -219,6 +219,8 @@ namespace ProjectD.Overworld
                     PushQuest(quest);
                 }
             }
+
+			_eventManager.LoadSceneEvents(_currentLevelName);
         }
 
         public void SaveAndQuit()

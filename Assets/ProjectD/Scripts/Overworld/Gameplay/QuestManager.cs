@@ -20,6 +20,7 @@ namespace ProjectD.Overworld
 
         public void CheckQuestString(string message)
         {
+			Debug.Log("Checking quest string: " + message);
             if (_currentQuest.RequiredActions.Any(x => x.ActionMessage == message))
             {
                 var tuple = _currentQuest.RequiredActions.Find(x => x.ActionMessage == message);
