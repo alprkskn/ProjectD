@@ -144,7 +144,6 @@ namespace ProjectD.Overworld
 
         private void OnQuestCompleted(Quest obj)
         {
-            // TODO: Do whatever you need after a finished quest and push the new quest to the manager.
             _eventManager.UnregisterEvents(obj.QuestEvents);
             _gameConf.CurrentQuestId = obj.NextQuest.name;
         }
@@ -263,8 +262,6 @@ namespace ProjectD.Overworld
 
         private void SetSceneTriggers(GameObject level, string levelName)
         {
-            // TODO: Decide how you will define triggers on level objects.
-            // Create or set the triggers in this  method.
             var conf = Resources.LoadAll<TextAsset>("GameInfo/Overworld/Triggers/" + levelName);
 
 

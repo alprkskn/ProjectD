@@ -110,7 +110,6 @@ namespace ProjectD.Overworld
 
         public void RemoveSceneTriggers(List<Trigger> sceneTriggers)
         {
-            // TODO: Clear old scene bound triggers before unloading a scene.
 			foreach(var trig in sceneTriggers)
 			{
 				if (_triggers.ContainsKey(trig.TriggerID))
@@ -122,7 +121,6 @@ namespace ProjectD.Overworld
 
         public void AddSceneTriggers(List<Trigger> sceneTiggers)
         {
-            // TODO: Add new triggers that come with the new scene.
 			foreach(var trig in sceneTiggers)
 			{
 				_triggers.Add(trig.TriggerID, trig);
