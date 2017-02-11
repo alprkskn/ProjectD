@@ -6,16 +6,12 @@ namespace ProjectD.Overworld
 {
 	public class CatStatePattern : StatePattern
 	{
-		// Use this for initialization
-		void Start()
+		private GameObject _chaseTarget;
+		private CircleCollider2D _alertCollider;
+
+		protected override void Update()
 		{
-
-		}
-
-		// Update is called once per frame
-		void Update()
-		{
-
+			base.Update();
 		}
 	}
 }

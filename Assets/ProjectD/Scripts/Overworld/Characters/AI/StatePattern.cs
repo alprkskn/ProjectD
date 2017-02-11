@@ -6,13 +6,12 @@ namespace ProjectD.Overworld
 {
 	public class StatePattern : MonoBehaviour
 	{
-		[HideInInspector]
-		public IState currentState;
+		protected ICatPickerState _currentState;
 
 		// Update is called once per frame
-		void Update()
+		protected virtual void Update()
 		{
-			currentState.UpdateState();
+			_currentState.UpdateState();
 		}
 	}
 }

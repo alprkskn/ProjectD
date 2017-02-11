@@ -8,7 +8,7 @@ namespace ProjectD.Overworld
 	{
 		private Player _player;
 		private List<GameObject> _targetItems;
-		private List<GameEntity> _cats;
+		private List<CatStatePattern> _cats;
 		private Pathfinder2D _pathfinder;
 
 

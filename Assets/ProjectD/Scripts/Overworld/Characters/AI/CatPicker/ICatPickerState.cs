@@ -4,16 +4,18 @@ using UnityEngine;
 
 namespace ProjectD.Overworld
 {
-	public interface IState
+	public interface ICatPickerState
 	{
 		void UpdateState();
 
 		void OnTriggerEnter(Collider other);
 
-		void ToPatrolState();
+		void ToCatIdleState();
 
-		void ToAlertState();
+		void ToCatReachTargetState();
 
-		void ToChaseState();
+		void ToCatChaseState();
+
+		void ToCatAvoidState();
 	}
 }

@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace ProjectD.Overworld
 {
-	public class CatChaseState : IState
+	public class CatChaseState : ICatPickerState
 	{
 		private readonly CatStatePattern ownerStatePattern;
 
@@ -19,22 +19,27 @@ namespace ProjectD.Overworld
 			throw new NotImplementedException();
 		}
 
-		public void ToAlertState()
+		public void ToCatReachTargetState()
 		{
 			throw new NotImplementedException();
 		}
 
-		public void ToChaseState()
+		public void ToCatChaseState()
 		{
 			throw new NotImplementedException();
 		}
 
-		public void ToPatrolState()
+		public void ToCatIdleState()
 		{
 			throw new NotImplementedException();
 		}
 
 		public void UpdateState()
+		{
+			throw new NotImplementedException();
+		}
+
+		public void ToCatAvoidState()
 		{
 			throw new NotImplementedException();
 		}
