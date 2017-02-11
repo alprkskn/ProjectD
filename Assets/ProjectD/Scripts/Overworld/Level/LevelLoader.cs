@@ -24,6 +24,7 @@ namespace ProjectD.Overworld
         private List<BaseSprite> _dynamiclevelObjects;
         private TiledMap _currentLevel = null;
         private string _currentLevelName = null;
+		private List<Event> _currentLevelEvents = null;
         private List<Trigger> _currentLevelTriggers;
         private Transform _currentLevelObjectsLayer;
         private Transform _currentLevelAgentsLayer;
@@ -47,6 +48,7 @@ namespace ProjectD.Overworld
             _eventManager.PlaceEvent += OnPlaceEvent;
             _eventManager.RemoveEvent += OnRemoveEvent;
             _eventManager.PlayAnimEvent += OnPlayAnimEvent;
+			_eventManager.InitiateMinigameEvent += OnInitiateMinigameEvent;
 
 			_gameConf = new GameConfiguration();
             _gameConf.Initialize(_eventManager);
@@ -87,7 +89,20 @@ namespace ProjectD.Overworld
             PlayerController.facing = Vector2.down;
         }
 
-        private void OnPlayAnimEvent(string arg1, string arg2)
+		private void OnInitiateMinigameEvent(MinigameEnum obj)
+		{
+			switch (obj)
+			{
+				case MinigameEnum.CatPicker:
+					InitiateCatPickerGame();
+					break;
+				default:
+					Debug.LogFormat("{0} mini game is not defined.", obj.ToString());
+					break;
+			}
+		}
+
+		private void OnPlayAnimEvent(string arg1, string arg2)
         {
             var target = GameObject.Find(arg1);
 
@@ -146,6 +161,7 @@ namespace ProjectD.Overworld
         {
             _eventManager.UnregisterEvents(obj.QuestEvents);
             _gameConf.CurrentQuestId = obj.NextQuest.name;
+			_eventManager.RegisterEvents(obj.NextQuest.QuestEvents, _currentLevelName);
         }
 
         public IEnumerator LoadLevel(string levelName, bool isTransition = false)
@@ -164,6 +180,7 @@ namespace ProjectD.Overworld
                 prevLevel = _currentLevelName;
 
                 _eventManager.RemoveSceneTriggers(_currentLevelTriggers);
+				_eventManager.UnregisterEvents(_currentLevelEvents);
                 Destroy(_currentLevel.gameObject);
                 _dynamiclevelObjects.Clear();
             }
@@ -221,7 +238,7 @@ namespace ProjectD.Overworld
                 }
             }
 
-			_eventManager.LoadSceneEvents(_currentLevelName);
+			_currentLevelEvents = _eventManager.LoadSceneEvents(_currentLevelName);
         }
 
         public void SaveAndQuit()
@@ -308,6 +325,13 @@ namespace ProjectD.Overworld
 
             return entryTile.gameObject;
         }
+
+		private void InitiateCatPickerGame()
+		{
+			Debug.Log("Cat picker game initialized.");
+			var cpgm = gameObject.AddComponent<CatPickerGameManager>();
+			cpgm.Initialize(_currentLevel.gameObject, PlayerScript, _pathfinder);
+		}
 
         void Update()
         {

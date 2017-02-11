@@ -27,6 +27,7 @@ namespace ProjectD.Overworld
                 tuple.IsDone = true;
                 if (_currentQuest.CheckFinished())
                 {
+					Debug.Log("Quest Completed! Next: " + _currentQuest.NextQuest.name);
                     QuestCompleted.Invoke(_currentQuest);
                     _currentQuest = _currentQuest.NextQuest;
                 }

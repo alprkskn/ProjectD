@@ -11,6 +11,7 @@ namespace ProjectD.Overworld
 
 		private List<GameObject> _targetItems;
 		private List<CatStatePattern> _cats;
+		private List<Vector3> _spawnPoints;
 
 		private GameObject[] _catPrefabs;
 
@@ -29,6 +30,13 @@ namespace ProjectD.Overworld
 			_cats = new List<CatStatePattern>();
 
 			_catPrefabs = Resources.LoadAll<GameObject>("GameInfo/Overworld/CatPicker/CatPrefabs/");
+
+			var spawnLayer = level.transform.Find("Spawn");
+			foreach(var s in spawnLayer.GetImmediateChildren())
+			{
+				var go = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+				go.transform.position = s.position;
+			}
 		}
 
 		public void QuitGame()

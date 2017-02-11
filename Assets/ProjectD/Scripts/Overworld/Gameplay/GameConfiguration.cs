@@ -8,6 +8,11 @@ using Event = ProjectD.Overworld.Event;
 
 namespace ProjectD
 {
+	public enum MinigameEnum
+	{
+		CatPicker, TowerDefence, Smashit
+	}
+
 	[Serializable]
     public class GameConfiguration
     {

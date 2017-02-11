@@ -147,10 +147,10 @@
     <None Include="Assets\Outline-Effect2\Resources\SpriteOutline.shader" />
     <None Include="Assets\ProjectD\Resources\GameInfo\InitialInventoryStates.txt" />
     <None Include="Assets\ProjectD\Resources\GameInfo\Inventories.txt" />
-    <None Include="Assets\ProjectD\Resources\GameInfo\Overworld\Triggers\Scene1\Entry_Scene2_enter.txt" />
     <None Include="Assets\ProjectD\Resources\GameInfo\Overworld\Triggers\Scene1\Entry_Scene2_exit.txt" />
     <None Include="Assets\ProjectD\Resources\GameInfo\Overworld\Triggers\Scene1\Entry_Spawn.txt" />
     <None Include="Assets\ProjectD\Resources\GameInfo\Overworld\Triggers\Scene1\Objects_OneByTwoTable_Interact.txt" />
+    <None Include="Assets\ProjectD\Resources\GameInfo\Overworld\Triggers\Scene2\Entry_Scene2_enter.txt" />
     <None Include="Assets\Sprites\Spritesheet\spritesheetInfo.txt" />
     <None Include="Assets\Tiled2Unity\Imported\Scene1.tiled2unity.xml" />
     <None Include="Assets\Tiled2Unity\Imported\Scene2.tiled2unity.xml" />

@@ -50,7 +50,7 @@ namespace ProjectD.Overworld
 
     public enum EventActionType
     {
-        Place, Remove, QuestMessage, PlayAnim
+        Place, Remove, QuestMessage, PlayAnim, InitiateMinigame
     }
 
     [Serializable]
@@ -62,6 +62,7 @@ namespace ProjectD.Overworld
         public Vector3 Position;
         public string Message;
         public string AnimName;
+		public MinigameEnum Minigame;
     }
 
     [Serializable]
@@ -83,6 +84,7 @@ namespace ProjectD.Overworld
         public event Action<string> RemoveEvent = delegate { };
         public event Action<string> QuestMessageEvent = delegate { };
         public event Action<string, string> PlayAnimEvent = delegate { };
+		public event Action<MinigameEnum> InitiateMinigameEvent = delegate { };
         public event Action<Event> EventFired = delegate { };
 
         private HashSet<string> _firedOneShotEvents;
@@ -153,9 +155,11 @@ namespace ProjectD.Overworld
             _firedOneShotEvents = new HashSet<string>(shotEvents);
         }
 
-		public void LoadSceneEvents(string sceneID)
+		public List<Event> LoadSceneEvents(string sceneID)
 		{
 			var evnts = Resources.LoadAll<EventData>("GameInfo/Overworld/Events/" + sceneID);
+
+			var result = new List<Event>();
 
 			foreach(var eData in evnts)
 			{
@@ -166,17 +170,19 @@ namespace ProjectD.Overworld
 				e.SceneID = eData.SceneID;
 				e.TriggerID = eData.TriggerID;
 				e.EventActions = new List<EventAction>(eData.EventActions);
-				RegisterEvent(e, sceneID);
+				RegisterSceneEvent(e, sceneID);
+				result.Add(e);
 			}
+			return result;
 		}
 
-        public void RegisterEvent(Event e, string sceneID)
+        public void RegisterSceneEvent(Event e, string sceneID)
         {
             if (e.SceneID != sceneID)
                 return;
 
             e.Active = true;
-            if (e.TriggerID != null)
+			if (e.TriggerID != null && e.TriggerID != "")
             {
                 if (!_registeredEvents.ContainsKey(e.TriggerID))
                 {
@@ -222,7 +228,7 @@ namespace ProjectD.Overworld
         {
             foreach (var pair in _registeredEvents)
             {
-                pair.Value.RemoveAll(x => e.Contains(x));
+                pair.Value.RemoveAll(x => e.Select(y => y.EventID).Contains(x.EventID));
             }
 
             for(int i=0; i<e.Count; i++)
@@ -262,6 +268,10 @@ namespace ProjectD.Overworld
                     case EventActionType.PlayAnim:
                         PlayAnimEvent.Invoke(act.GOName, act.AnimName);
                         break;
+					case EventActionType.InitiateMinigame:
+						InitiateMinigameEvent.Invoke(act.Minigame);
+						break;
+
                 }
             }
 			EventFired.Invoke(evnt);
