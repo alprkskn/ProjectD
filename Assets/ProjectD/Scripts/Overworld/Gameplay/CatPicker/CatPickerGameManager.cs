@@ -32,10 +32,13 @@ namespace ProjectD.Overworld
 			_catPrefabs = Resources.LoadAll<GameObject>("GameInfo/Overworld/CatPicker/CatPrefabs/");
 
 			var spawnLayer = level.transform.Find("Spawn");
-			foreach(var s in spawnLayer.GetImmediateChildren())
+			var spawners = spawnLayer.GetImmediateChildren();
+			_spawnPoints = new List<Vector3>();
+			Debug.LogFormat("Found {0} spawn points.", spawners.Count);
+			foreach(var s in spawners)
 			{
-				var go = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-				go.transform.position = s.position;
+				var col = s.GetComponent<BoxCollider2D>();
+				_spawnPoints.Add(col.bounds.center);
 			}
 		}
 
