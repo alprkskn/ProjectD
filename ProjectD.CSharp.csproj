@@ -101,6 +101,13 @@
     <Compile Include="Assets\Pathfinding\Scripts\WaypointNode.cs" />
     <Compile Include="Assets\Pathfinding\Scripts\WaypointPathfinder.cs" />
     <Compile Include="Assets\ProjectD\Scripts\Overworld\Camera\OverworldCameraController.cs" />
+    <Compile Include="Assets\ProjectD\Scripts\Overworld\Characters\AI\CatPicker\CatAvoidState.cs" />
+    <Compile Include="Assets\ProjectD\Scripts\Overworld\Characters\AI\CatPicker\CatChaseState.cs" />
+    <Compile Include="Assets\ProjectD\Scripts\Overworld\Characters\AI\CatPicker\CatIdleState.cs" />
+    <Compile Include="Assets\ProjectD\Scripts\Overworld\Characters\AI\CatPicker\CatReachTargetState.cs" />
+    <Compile Include="Assets\ProjectD\Scripts\Overworld\Characters\AI\CatPicker\CatStatePattern.cs" />
+    <Compile Include="Assets\ProjectD\Scripts\Overworld\Characters\AI\IState.cs" />
+    <Compile Include="Assets\ProjectD\Scripts\Overworld\Characters\AI\StatePattern.cs" />
     <Compile Include="Assets\ProjectD\Scripts\Overworld\Characters\Agent.cs" />
     <Compile Include="Assets\ProjectD\Scripts\Overworld\Characters\GameEntity.cs" />
     <Compile Include="Assets\ProjectD\Scripts\Overworld\Characters\Player.cs" />
