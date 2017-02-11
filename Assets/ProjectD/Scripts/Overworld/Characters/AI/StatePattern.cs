@@ -8,7 +8,16 @@ namespace ProjectD.Overworld
 	{
 		protected ICatPickerState _currentState;
 
-		// Update is called once per frame
+		protected virtual void Awake()
+		{
+
+		}
+
+		protected virtual void Start()
+		{
+
+		}
+
 		protected virtual void Update()
 		{
 			_currentState.UpdateState();

@@ -113,7 +113,7 @@
     <Compile Include="Assets\ProjectD\Scripts\Overworld\Characters\Player.cs" />
     <Compile Include="Assets\ProjectD\Scripts\Overworld\Characters\RPGCharController.cs" />
     <Compile Include="Assets\ProjectD\Scripts\Overworld\Gameplay\BaseItem.cs" />
-    <Compile Include="Assets\ProjectD\Scripts\Overworld\Gameplay\CatPicker\CatPicker.cs" />
+    <Compile Include="Assets\ProjectD\Scripts\Overworld\Gameplay\CatPicker\CatPickerGameManager.cs" />
     <Compile Include="Assets\ProjectD\Scripts\Overworld\Gameplay\EventSystem\Event.cs" />
     <Compile Include="Assets\ProjectD\Scripts\Overworld\Gameplay\EventSystem\EventData.cs" />
     <Compile Include="Assets\ProjectD\Scripts\Overworld\Gameplay\EventSystem\PlayerBumpTrigger.cs" />

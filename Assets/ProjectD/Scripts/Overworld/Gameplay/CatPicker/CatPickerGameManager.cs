@@ -4,13 +4,15 @@ using UnityEngine;
 
 namespace ProjectD.Overworld
 {
-	public class CatPicker : MonoBehaviour
+	public class CatPickerGameManager : MonoBehaviour
 	{
 		private Player _player;
-		private List<GameObject> _targetItems;
-		private List<CatStatePattern> _cats;
 		private Pathfinder2D _pathfinder;
 
+		private List<GameObject> _targetItems;
+		private List<CatStatePattern> _cats;
+
+		private GameObject[] _catPrefabs;
 
 		// TODO: initialize players, targetItems, UI, pathfinder. Whatever is needed when
 		// the game transitions into the CatPicker game.
@@ -20,6 +22,13 @@ namespace ProjectD.Overworld
 
 		public void Initialize(GameObject level, Player player, Pathfinder2D pathfinder)
 		{
+			_player = player;
+			_pathfinder = pathfinder;
+
+			_targetItems = new List<GameObject>();
+			_cats = new List<CatStatePattern>();
+
+			_catPrefabs = Resources.LoadAll<GameObject>("GameInfo/Overworld/CatPicker/CatPrefabs/");
 		}
 
 		public void QuitGame()
