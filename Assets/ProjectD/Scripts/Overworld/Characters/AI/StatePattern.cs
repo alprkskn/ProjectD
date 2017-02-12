@@ -20,7 +20,10 @@ namespace ProjectD.Overworld
 
 		protected virtual void Update()
 		{
-			_currentState.UpdateState();
+            if (_currentState != null)
+            {
+                _currentState.UpdateState();
+            }
 		}
 	}
 }

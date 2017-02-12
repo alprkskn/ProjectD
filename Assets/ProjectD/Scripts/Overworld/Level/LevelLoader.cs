@@ -192,6 +192,7 @@ namespace ProjectD.Overworld
 
             go.transform.position = Vector2.up * tm.MapHeightInPixels;
             _currentLevel = tm;
+            TileUtils.Initialize(_currentLevel);
             GridUtils.SetGridTileSize(_currentLevel.TileHeight);
             _currentLevelName = levelName;
 

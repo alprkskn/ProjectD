@@ -25,6 +25,8 @@ namespace ProjectD.Overworld
 			_idleState = new CatIdleState(this);
 
 			_navigationAgent = GetComponent<Agent>();
+
+            _currentState = _idleState;
 		}
 
 		protected override void Update()

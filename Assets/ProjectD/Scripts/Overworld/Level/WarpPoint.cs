@@ -30,6 +30,5 @@ public class WarpPoint : MonoBehaviour
         {
             PlayerDetected.Invoke(this.gameObject);
         }
-        Debug.Log(other.name);
     }
 }
