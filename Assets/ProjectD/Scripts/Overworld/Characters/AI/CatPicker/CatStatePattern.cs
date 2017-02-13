@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -6,6 +7,8 @@ namespace ProjectD.Overworld
 {
 	public class CatStatePattern : StatePattern
 	{
+		public event Action<CatStatePattern, GameObject> LostTarget; // Thrown when the target for the cat is lost for some reason.
+
 		private Vector3? _chaseTarget;
 		private CircleCollider2D _alertCollider;
 
@@ -26,12 +29,24 @@ namespace ProjectD.Overworld
 
 			_navigationAgent = GetComponent<Agent>();
 
+			_alertCollider = GetComponent<CircleCollider2D>();
+			if(_alertCollider == null)
+			{
+				_alertCollider = gameObject.AddComponent<CircleCollider2D>();
+				_alertCollider.radius = TileUtils.TileSize;
+			}
+
             _currentState = _idleState;
 		}
 
 		protected override void Update()
 		{
 			base.Update();
+		}
+
+		public void SetChaseTarget(Vector3 target)
+		{
+			_chaseTarget = target;
 		}
 	}
 }

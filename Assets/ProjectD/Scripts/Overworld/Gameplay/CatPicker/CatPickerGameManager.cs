@@ -11,6 +11,7 @@ namespace ProjectD.Overworld
 
 		private List<GameObject> _targetItems;
 		private List<CatStatePattern> _cats;
+		private Dictionary<GameObject, List<CatStatePattern>> _targetCatMatch;
 		private List<Vector3> _spawnPoints;
 
 		private GameObject[] _catPrefabs;
@@ -30,6 +31,7 @@ namespace ProjectD.Overworld
 
 			_targetItems = new List<GameObject>();
 			_cats = new List<CatStatePattern>();
+			_targetCatMatch = new Dictionary<GameObject, List<CatStatePattern>>();
 
 			_catPrefabs = Resources.LoadAll<GameObject>("GameInfo/Overworld/CatPicker/CatPrefabs/");
 
@@ -69,12 +71,27 @@ namespace ProjectD.Overworld
                 cat.transform.SetParent(_agentsParent);
 
                 var csp = cat.GetComponent<CatStatePattern>();
+				csp.LostTarget += OnCatLoseTarget;
                 _cats.Add(csp);
 
                 Debug.Log("Spawned a cat!");
                 yield return new WaitForSeconds(Random.Range(1, 3f));
             }
         }
+
+		private void OnCatLoseTarget(CatStatePattern obj, GameObject target)
+		{
+			_targetCatMatch[target].Remove(obj);
+			throw new System.NotImplementedException();
+		}
+
+		private void SetCatTarget(CatStatePattern cat)
+		{
+			//TODO: Improve the pure random with some other selection technique.
+			var t = _targetItems[Random.Range(0, _targetItems.Count)];
+			_targetCatMatch[t].Add(cat);
+			cat.SetChaseTarget(TileUtils.SnapToGrid(t.transform.position));
+		}
 
 		public void QuitGame()
 		{
