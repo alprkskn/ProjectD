@@ -8,6 +8,7 @@ namespace ProjectD.Overworld
 	{
 		private Player _player;
 		private Pathfinder2D _pathfinder;
+        private LevelLoader _levelLoader;
 
 		private List<GameObject> _targetItems;
 		private List<CatStatePattern> _cats;
@@ -18,16 +19,18 @@ namespace ProjectD.Overworld
         private Transform _agentsParent;
         private Coroutine _catSpawner;
 
-		// TODO: initialize players, targetItems, UI, pathfinder. Whatever is needed when
-		// the game transitions into the CatPicker game.
 
-		// This class will be responsible to assign the cats their targets. Track the player/cat interaction.
-		// Also keep track of the target items.
+        // TODO: initialize players, targetItems, UI, pathfinder. Whatever is needed when
+        // the game transitions into the CatPicker game.
 
-		public void Initialize(GameObject level, Player player, Pathfinder2D pathfinder)
+        // This class will be responsible to assign the cats their targets. Track the player/cat interaction.
+        // Also keep track of the target items.
+
+        public void Initialize(LevelLoader levelLoader, GameObject level, Player player, Pathfinder2D pathfinder)
 		{
 			_player = player;
 			_pathfinder = pathfinder;
+            _levelLoader = levelLoader;
 
 			_targetItems = new List<GameObject>();
 			_cats = new List<CatStatePattern>();
@@ -50,8 +53,27 @@ namespace ProjectD.Overworld
             // that object is present.
             _agentsParent = GameObject.Find("Agents").transform;
 
+            levelLoader.RemovedObject += OnObjectRemovedFromScene;
+
+            PopulateTargetItems(level);
+
             StartCoroutine(GameStartRoutine());
 		}
+
+        private void OnObjectRemovedFromScene(GameObject obj)
+        {
+            if (_targetItems.Contains(obj))
+            {
+                _targetItems.Remove(obj);
+
+                foreach(var cat in _targetCatMatch[obj])
+                {
+                    cat.SetChaseTarget(null);
+                }
+
+                _targetCatMatch.Remove(obj);
+            }
+        }
 
         private IEnumerator GameStartRoutine()
         {
@@ -66,6 +88,9 @@ namespace ProjectD.Overworld
             while(_cats.Count < 3)
             {
                 var cat = Instantiate<GameObject>(_catPrefabs[Random.Range(0, _catPrefabs.Length)]);
+
+                _levelLoader.AddAgentToScene(cat);
+
                 var sp = TileUtils.SnapToGrid(_spawnPoints[Random.Range(0, _spawnPoints.Count)]);
                 cat.transform.position = sp;
                 cat.transform.SetParent(_agentsParent);
@@ -73,6 +98,7 @@ namespace ProjectD.Overworld
                 var csp = cat.GetComponent<CatStatePattern>();
 				csp.LostTarget += OnCatLoseTarget;
                 _cats.Add(csp);
+                SetCatTarget(csp);
 
                 Debug.Log("Spawned a cat!");
                 yield return new WaitForSeconds(Random.Range(1, 3f));
@@ -91,7 +117,19 @@ namespace ProjectD.Overworld
 			var t = _targetItems[Random.Range(0, _targetItems.Count)];
 			_targetCatMatch[t].Add(cat);
 			cat.SetChaseTarget(TileUtils.SnapToGrid(t.transform.position));
+            Debug.Log("Set target for cat: " + t.name);
 		}
+
+        private void PopulateTargetItems(GameObject levelObject)
+        {
+            var objs = levelObject.transform.Find("Objects");
+
+            foreach(var bs in objs.GetComponentsInChildren<BaseSprite>())
+            {
+                _targetItems.Add(bs.gameObject);
+                _targetCatMatch.Add(bs.gameObject, new List<CatStatePattern>());
+            }
+        }
 
 		public void QuitGame()
 		{

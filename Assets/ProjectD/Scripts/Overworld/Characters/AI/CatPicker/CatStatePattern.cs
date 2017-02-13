@@ -7,36 +7,58 @@ namespace ProjectD.Overworld
 {
 	public class CatStatePattern : StatePattern
 	{
+
+        public enum CatStates
+        {
+            Avoid, Chase, ReachTarget, Idle
+        }
+
 		public event Action<CatStatePattern, GameObject> LostTarget; // Thrown when the target for the cat is lost for some reason.
 
 		private Vector3? _chaseTarget;
+        public Vector3? ChaseTarget
+        {
+            get
+            {
+                return _chaseTarget;
+            }
+        }
+
+
 		private CircleCollider2D _alertCollider;
 
-		private CatAvoidState _avoidState;
-		private CatChaseState _chaseState;
-		private CatReachTargetState _reachTargetState;
-		private CatIdleState _idleState;
+        private Dictionary<CatStates, ICatPickerState> _states;
 		private Agent _navigationAgent;
+        public Agent NavigationAgent
+        {
+            get
+            {
+                return _navigationAgent;
+            }
+        }
 
-		protected override void Awake()
-		{
-			base.Awake();
+        protected override void Awake()
+        {
+            base.Awake();
 
-			_avoidState = new CatAvoidState(this);
-			_chaseState = new CatChaseState(this);
-			_reachTargetState = new CatReachTargetState(this);
-			_idleState = new CatIdleState(this);
+            _states = new Dictionary<CatStates, ICatPickerState>()
+            {
+                { CatStates.Avoid, new CatAvoidState(this) },
+                { CatStates.Chase, new CatChaseState(this) },
+                { CatStates.ReachTarget, new CatReachTargetState(this) },
+                { CatStates.Idle, new CatIdleState(this) }
+            };
 
-			_navigationAgent = GetComponent<Agent>();
+            _navigationAgent = GetComponent<Agent>();
 
-			_alertCollider = GetComponent<CircleCollider2D>();
-			if(_alertCollider == null)
-			{
-				_alertCollider = gameObject.AddComponent<CircleCollider2D>();
-				_alertCollider.radius = TileUtils.TileSize;
-			}
+            _alertCollider = GetComponent<CircleCollider2D>();
+            if (_alertCollider == null)
+            {
+                _alertCollider = gameObject.AddComponent<CircleCollider2D>();
+                _alertCollider.radius = TileUtils.TileSize;
+            }
 
-            _currentState = _idleState;
+            _currentState = _states[CatStates.Idle];
 		}
 
 		protected override void Update()
@@ -44,9 +66,14 @@ namespace ProjectD.Overworld
 			base.Update();
 		}
 
-		public void SetChaseTarget(Vector3 target)
+		public void SetChaseTarget(Vector3? target)
 		{
 			_chaseTarget = target;
 		}
+
+        public void ChangeState(CatStates newState)
+        {
+            _currentState = _states[newState];
+        }
 	}
 }

@@ -9,6 +9,8 @@ namespace ProjectD.Overworld
 {
     public class LevelLoader : MonoBehaviour
     {
+        public event Action<GameObject> RemovedObject = delegate { };
+
         public GameObject[] LevelPrefabs;
         public RPGCharController PlayerController;
         public Player PlayerScript;
@@ -126,6 +128,7 @@ namespace ProjectD.Overworld
                     }
                 }
 
+                RemovedObject.Invoke(objectToRemove.gameObject);
                 GameObject.Destroy(objectToRemove.gameObject);
             }
         }
@@ -252,6 +255,21 @@ namespace ProjectD.Overworld
             Application.Quit();
         }
 
+        public void AddAgentToScene(GameObject obj)
+        {
+            obj.transform.SetParent(_currentLevelAgentsLayer);
+            var bs = obj.GetComponent<BaseSprite>();
+
+            if(bs != null)
+            {
+                bs.SetSortingLayer(_currentLevel);
+                if (!bs.gameObject.isStatic)
+                {
+                    _dynamiclevelObjects.Add(bs);
+                }
+            }
+        }
+
         private void SetSpriteObjects(GameObject level)
         {
             _dynamiclevelObjects = new List<BaseSprite>();
@@ -331,7 +349,7 @@ namespace ProjectD.Overworld
 		{
 			Debug.Log("Cat picker game initialized.");
 			var cpgm = gameObject.AddComponent<CatPickerGameManager>();
-			cpgm.Initialize(_currentLevel.gameObject, PlayerScript, _pathfinder);
+			cpgm.Initialize(this, _currentLevel.gameObject, PlayerScript, _pathfinder);
 		}
 
         void Update()
