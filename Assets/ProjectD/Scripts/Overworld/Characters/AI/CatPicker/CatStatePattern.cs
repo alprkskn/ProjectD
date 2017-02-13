@@ -6,7 +6,7 @@ namespace ProjectD.Overworld
 {
 	public class CatStatePattern : StatePattern
 	{
-		private Vector3 _chaseTarget;
+		private Vector3? _chaseTarget;
 		private CircleCollider2D _alertCollider;
 
 		private CatAvoidState _avoidState;
