@@ -92,6 +92,7 @@ namespace ProjectD.Overworld
 
         private IEnumerator GameStartRoutine()
         {
+            _levelLoader.ToggleWarpPoints(false);
             yield return new WaitForSeconds(2f);
             Debug.Log("Starting to spawn cats.");
 
@@ -126,6 +127,12 @@ namespace ProjectD.Overworld
                 }
             }
         }
+
+		public IEnumerator QuitGame()
+		{
+            _levelLoader.ToggleWarpPoints(true);
+            yield return null;
+		}
 
 		private void OnCatLoseTarget(CatStatePattern obj, GameObject target)
 		{
@@ -166,10 +173,6 @@ namespace ProjectD.Overworld
             }
         }
 
-		public void QuitGame()
-		{
-
-		}
 
 		// Use this for initialization
 		void Start()

@@ -24,6 +24,11 @@ public class WarpPoint : MonoBehaviour
 
     }
 
+    public void Toggle(bool on)
+    {
+        _collider.enabled = on;
+    }
+
     void OnTriggerEnter2D(Collider2D other)
     {
         if (other.gameObject.layer == LayerMask.NameToLayer("Player"))

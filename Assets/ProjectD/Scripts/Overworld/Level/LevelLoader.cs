@@ -25,6 +25,7 @@ namespace ProjectD.Overworld
 
         private Dictionary<string, GameObject> _levels;
         private List<BaseSprite> _dynamiclevelObjects;
+        private List<WarpPoint> _warpPoints;
         private TiledMap _currentLevel = null;
         private string _currentLevelName = null;
 		private List<Event> _currentLevelEvents = null;
@@ -308,12 +309,22 @@ namespace ProjectD.Overworld
 
         private void SetWarpPoints(GameObject level)
         {
+            if(_warpPoints == null)
+            {
+                _warpPoints = new List<WarpPoint>();
+            }
+            else
+            {
+                _warpPoints.Clear();
+            }
+
             var spawnLayer = level.transform.Find("Spawn");
 
             foreach (var child in spawnLayer.GetImmediateChildren())
             {
                 var wp = child.gameObject.AddComponent<WarpPoint>();
                 wp.PlayerDetected += (x) => StartCoroutine(LoadLevel(x.name, true));
+                _warpPoints.Add(wp);
                 Debug.LogFormat("Warp point detected: {0}", child.name);
             }
         }
@@ -334,7 +345,10 @@ namespace ProjectD.Overworld
                     var lines = trigConf.text.Split('\n').Select(x => x.Replace("\r", "")).ToArray();
                     var t = Type.GetType("ProjectD.Overworld.TileEnterTrigger");
                     var trigObject = Type.GetType("ProjectD.Overworld." + lines[0]).GetMethod("Create").Invoke(null, new object[] { lines }) as Trigger;
-                    addedTriggers.Add(trigObject);
+                    if (trigObject != null)
+                    {
+                        addedTriggers.Add(trigObject);
+                    }
                 }
             }
 
@@ -373,6 +387,21 @@ namespace ProjectD.Overworld
 			var cpgm = gameObject.AddComponent<CatPickerGameManager>();
 			cpgm.Initialize(this, _currentLevel.gameObject, PlayerScript, _pathfinder);
 		}
+
+        public void ToggleWarpPoints(bool on)
+        {
+            if (_warpPoints == null) return;
+            
+            foreach(var wp in _warpPoints)
+            {
+                wp.Toggle(on);
+            }
+        }
+
+        public void ToggleSingleWarpPoint(WarpPoint wp, bool on)
+        {
+            wp.Toggle(on);
+        }
 
         void Update()
         {
