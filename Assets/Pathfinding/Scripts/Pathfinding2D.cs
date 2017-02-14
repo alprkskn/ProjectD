@@ -1,9 +1,12 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System;
 
 public class Pathfinding2D : MonoBehaviour
 {
+    public event Action<Pathfinding2D, Vector3> TargetReached = delegate { };
+
     public List<Vector3> Path = new List<Vector3>();
     public bool JS = false;
     public float baseSpeed = 30f;
@@ -30,7 +33,13 @@ public class Pathfinding2D : MonoBehaviour
             transform.position = Vector3.MoveTowards(transform.position, next, Time.deltaTime * speed);
             if (Vector2.Distance(transform.position, Path[0]) < 0.4F)
             {
+                var p = Path[0];
                 Path.RemoveAt(0);
+
+                if (Path.Count == 0)
+                {
+                    TargetReached.Invoke(this, p);
+                }
             }
         }
     }

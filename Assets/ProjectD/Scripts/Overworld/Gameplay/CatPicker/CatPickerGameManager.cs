@@ -54,11 +54,26 @@ namespace ProjectD.Overworld
             _agentsParent = GameObject.Find("Agents").transform;
 
             levelLoader.RemovedObject += OnObjectRemovedFromScene;
+            levelLoader.RemovedAgent += OnAgentRemovedFromScene;
 
             PopulateTargetItems(level);
 
             StartCoroutine(GameStartRoutine());
 		}
+
+        private void OnAgentRemovedFromScene(Agent obj)
+        {
+            var cat = obj.GetComponent<CatStatePattern>();
+
+            if(cat != null)
+            {
+                _cats.Remove(cat);
+                foreach(var pair in _targetCatMatch)
+                {
+                    pair.Value.Remove(cat);
+                }
+            }
+        }
 
         private void OnObjectRemovedFromScene(GameObject obj)
         {
@@ -85,23 +100,30 @@ namespace ProjectD.Overworld
 
         private IEnumerator CatSpawnerRoutine()
         {
-            while(_cats.Count < 3)
+            while(true)
             {
-                var cat = Instantiate<GameObject>(_catPrefabs[Random.Range(0, _catPrefabs.Length)]);
+                if (_cats.Count < 3)
+                {
+                    var cat = Instantiate<GameObject>(_catPrefabs[Random.Range(0, _catPrefabs.Length)]);
 
-                _levelLoader.AddAgentToScene(cat);
+                    _levelLoader.AddAgentToScene(cat);
 
-                var sp = TileUtils.SnapToGrid(_spawnPoints[Random.Range(0, _spawnPoints.Count)]);
-                cat.transform.position = sp;
-                cat.transform.SetParent(_agentsParent);
+                    var sp = TileUtils.SnapToGrid(_spawnPoints[Random.Range(0, _spawnPoints.Count)]);
+                    cat.transform.position = sp;
+                    cat.transform.SetParent(_agentsParent);
 
-                var csp = cat.GetComponent<CatStatePattern>();
-				csp.LostTarget += OnCatLoseTarget;
-                _cats.Add(csp);
-                SetCatTarget(csp);
+                    var csp = cat.GetComponent<CatStatePattern>();
+                    csp.LostTarget += OnCatLoseTarget;
+                    _cats.Add(csp);
+                    SetCatTarget(csp);
 
-                Debug.Log("Spawned a cat!");
-                yield return new WaitForSeconds(Random.Range(1, 3f));
+                    Debug.Log("Spawned a cat!");
+                    yield return new WaitForSeconds(Random.Range(1, 3f));
+                }
+                else
+                {
+                    yield return null;
+                }
             }
         }
 
@@ -117,8 +139,21 @@ namespace ProjectD.Overworld
 			var t = _targetItems[Random.Range(0, _targetItems.Count)];
 			_targetCatMatch[t].Add(cat);
 			cat.SetChaseTarget(TileUtils.SnapToGrid(t.transform.position));
+
+            cat.NavigationAgent.TargetReached += OnCatReachedTarget;
+
             Debug.Log("Set target for cat: " + t.name);
 		}
+
+        private void OnCatReachedTarget(Pathfinding2D arg1, Vector3 arg2)
+        {
+            var go = arg1.gameObject;
+            Debug.LogFormat("{0} reached its target.", go.name);
+
+            // TODO: Normally this goes into the Target reached state.
+            // For now we just remove the agents from the scene.
+            _levelLoader.RemoveAgentFromScene(go);
+        }
 
         private void PopulateTargetItems(GameObject levelObject)
         {

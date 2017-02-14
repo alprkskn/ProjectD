@@ -10,6 +10,7 @@ namespace ProjectD.Overworld
     public class LevelLoader : MonoBehaviour
     {
         public event Action<GameObject> RemovedObject = delegate { };
+        public event Action<Agent> RemovedAgent = delegate { };
 
         public GameObject[] LevelPrefabs;
         public RPGCharController PlayerController;
@@ -268,6 +269,27 @@ namespace ProjectD.Overworld
                     _dynamiclevelObjects.Add(bs);
                 }
             }
+        }
+
+        public void RemoveAgentFromScene(GameObject obj)
+        {
+            var bs = obj.GetComponent<BaseSprite>();
+
+            if(bs != null)
+            {
+                if (_dynamiclevelObjects.Contains(bs))
+                {
+                    _dynamiclevelObjects.Remove(bs);
+                }
+            }
+
+            var agent = obj.GetComponent<Agent>();
+            if(agent != null)
+            {
+                RemovedAgent.Invoke(agent);
+            }
+
+            Destroy(obj);
         }
 
         private void SetSpriteObjects(GameObject level)
