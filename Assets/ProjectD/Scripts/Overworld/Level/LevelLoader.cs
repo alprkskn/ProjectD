@@ -58,7 +58,7 @@ namespace ProjectD.Overworld
             _gameConf.Initialize(_eventManager);
 
             _interactionsManager = gameObject.AddComponent<InteractionsManager>();
-            _interactionsManager.InitializeForPlayer(PlayerScript);
+            _interactionsManager.InitializeForPlayer(PlayerScript, this);
 
 
             _questManager = gameObject.AddComponent<QuestManager>();

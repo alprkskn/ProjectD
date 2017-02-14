@@ -37,6 +37,15 @@ namespace ProjectD.Overworld
             }
         }
 
+        private CatPickerCat _catEntity;
+        public CatPickerCat CatEntity
+        {
+            get
+            {
+                return _catEntity;
+            }
+        }
+
         protected override void Awake()
         {
             base.Awake();
@@ -50,6 +59,7 @@ namespace ProjectD.Overworld
             };
 
             _navigationAgent = GetComponent<Agent>();
+            _catEntity = GetComponent<CatPickerCat>();
 
             _alertCollider = GetComponent<CircleCollider2D>();
             if (_alertCollider == null)

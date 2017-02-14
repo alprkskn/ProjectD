@@ -115,6 +115,7 @@ namespace ProjectD.Overworld
 
                     var csp = cat.GetComponent<CatStatePattern>();
                     csp.LostTarget += OnCatLoseTarget;
+                    csp.CatEntity.PickedUpEvent += OnCatPickedUp;
                     _cats.Add(csp);
                     SetCatTarget(csp);
 
@@ -128,7 +129,7 @@ namespace ProjectD.Overworld
             }
         }
 
-		public IEnumerator QuitGame()
+        public IEnumerator QuitGame()
 		{
             _levelLoader.ToggleWarpPoints(true);
             yield return null;
@@ -161,6 +162,13 @@ namespace ProjectD.Overworld
             // For now we just remove the agents from the scene.
             _levelLoader.RemoveAgentFromScene(go);
         }
+
+        private void OnCatPickedUp(CatPickerCat obj)
+        {
+            var go = obj.gameObject;
+            _levelLoader.RemoveAgentFromScene(go);
+        }
+
 
         private void PopulateTargetItems(GameObject levelObject)
         {

@@ -8,15 +8,39 @@ namespace ProjectD.Overworld
     public class InteractionsManager : MonoBehaviour
     {
         private Player _playerScript;
+        private LevelLoader _levelLoader;
+
         private List<IInteractive> _reachibleObjects = new List<IInteractive>();
 
-        public void InitializeForPlayer(Player playerScript)
+        public void InitializeForPlayer(Player playerScript, LevelLoader levelLoader)
         {
             _playerScript = playerScript;
             _playerScript.PlayerReachesInteractives += OnNewReachibleInteractivesArrive;
             _playerScript.PlayerInteracts += OnPlayerInteract;
             _playerScript.PlayerOpenedItemInventory += OnPlayerOpensItemInventory;
+
+            _levelLoader = levelLoader;
+            _levelLoader.RemovedAgent += (agent) =>
+            {
+                var interactive = agent.GetComponentsInChildren<IInteractive>();
+
+                foreach (var i in interactive)
+                {
+                    _reachibleObjects.Remove(i);
+                }
+            };
+            _levelLoader.RemovedObject += (obj) =>
+            {
+                var interactive = obj.GetComponentsInChildren<IInteractive>();
+
+                foreach (var i in interactive)
+                {
+                    _reachibleObjects.Remove(i);
+                }
+            };
+
         }
+
 
         private void OnPlayerOpensItemInventory(ItemInventory obj)
         {

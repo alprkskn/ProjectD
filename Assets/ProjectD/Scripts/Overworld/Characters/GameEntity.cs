@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace ProjectD.Overworld
 {
-    public class GameEntity : MonoBehaviour, IInteractive
+    public class GameEntity : MonoBehaviour
     {
         [SerializeField]
         private float MaxHealth;
@@ -19,10 +19,6 @@ namespace ProjectD.Overworld
             }
         }
 
-		public void Highlight(bool on)
-		{
-		}
-
 		public float Hurt(float amount)
         {
             _health -= amount;
@@ -35,16 +31,6 @@ namespace ProjectD.Overworld
 
             return _health;
         }
-
-		public void Interact(GameObject player)
-		{
-			Debug.Log("Woo Woo interaction");
-		}
-
-		public string Tooltip()
-		{
-			throw new NotImplementedException();
-		}
 
 		// Use this for initialization
 		void Start()
