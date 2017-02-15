@@ -119,6 +119,8 @@ namespace ProjectD.Overworld
                     _cats.Add(csp);
                     SetCatTarget(csp);
 
+                    cat.name = cat.name.Replace("(Clone)", "_" + Random.Range(0, 1000).ToString());
+
                     Debug.Log("Spawned a cat!");
                     yield return new WaitForSeconds(Random.Range(1, 3f));
                 }
@@ -148,7 +150,7 @@ namespace ProjectD.Overworld
 			_targetCatMatch[t].Add(cat);
 			cat.SetChaseTarget(TileUtils.SnapToGrid(t.transform.position));
 
-            cat.NavigationAgent.TargetReached += OnCatReachedTarget;
+            cat.TargetReached += OnCatReachedTarget;
 
             Debug.Log("Set target for cat: " + t.name);
 		}

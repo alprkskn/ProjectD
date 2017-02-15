@@ -14,6 +14,7 @@ namespace ProjectD.Overworld
         }
 
 		public event Action<CatStatePattern, GameObject> LostTarget; // Thrown when the target for the cat is lost for some reason.
+        public event Action<Pathfinding2D, Vector3> TargetReached = delegate { };
 
 		private Vector3? _chaseTarget;
         public Vector3? ChaseTarget
@@ -84,6 +85,11 @@ namespace ProjectD.Overworld
         public void ChangeState(CatStates newState)
         {
             _currentState = _states[newState];
+        }
+
+        public void EmitTargetReached(Vector3 target)
+        {
+            TargetReached.Invoke(this._navigationAgent, target);
         }
 	}
 }
