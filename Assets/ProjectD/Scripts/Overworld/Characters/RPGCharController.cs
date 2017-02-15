@@ -109,12 +109,11 @@ namespace ProjectD.Overworld
             {
                 _target = new Vector3(_transform.position.x + tileSize * dx, _transform.position.y + tileSize * dy);
                 var col = Physics2D.OverlapCircle((Vector2)_target, 1f, obstacleLayers);
-                if (col != null)
+                if (col != null && !(col is CircleCollider2D))
                 {
                     if (Input.anyKeyDown)
                     {
                         CharacterBumped((Vector2)_target, col.gameObject);
-                        Debug.Log("Character bumped.");
                     }
                     _target = null;
                 }

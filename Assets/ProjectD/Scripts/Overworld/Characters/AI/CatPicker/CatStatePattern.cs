@@ -47,30 +47,45 @@ namespace ProjectD.Overworld
             }
         }
 
+        protected CatPickerGameManager _gameManager;
+
+        public void SetManager(CatPickerGameManager manager)
+        {
+            _gameManager = manager;
+            _states = new Dictionary<CatStates, ICatPickerState>()
+            {
+                { CatStates.Avoid, new CatAvoidState(this, _gameManager) },
+                { CatStates.Chase, new CatChaseState(this, _gameManager) },
+                { CatStates.ReachTarget, new CatReachTargetState(this, _gameManager) },
+                { CatStates.Idle, new CatIdleState(this, _gameManager) }
+            };
+
+            _currentState = _states[CatStates.Idle];
+        }
+
         protected override void Awake()
         {
             base.Awake();
 
-            _states = new Dictionary<CatStates, ICatPickerState>()
-            {
-                { CatStates.Avoid, new CatAvoidState(this) },
-                { CatStates.Chase, new CatChaseState(this) },
-                { CatStates.ReachTarget, new CatReachTargetState(this) },
-                { CatStates.Idle, new CatIdleState(this) }
-            };
 
             _navigationAgent = GetComponent<Agent>();
             _catEntity = GetComponent<CatPickerCat>();
 
-            _alertCollider = GetComponent<CircleCollider2D>();
+                _alertCollider = GetComponent<CircleCollider2D>();
             if (_alertCollider == null)
             {
                 _alertCollider = gameObject.AddComponent<CircleCollider2D>();
-                _alertCollider.radius = TileUtils.TileSize;
+                _alertCollider.radius = TileUtils.TileSize * 1.5f;
+                _alertCollider.isTrigger = true;
             }
 
-            _currentState = _states[CatStates.Idle];
 		}
+
+        
+		void OnTriggerEnter2D(Collider2D other)
+        {
+            _currentState.OnTriggerEnter2D(other);
+        }
 
 		protected override void Update()
 		{
@@ -85,6 +100,7 @@ namespace ProjectD.Overworld
         public void ChangeState(CatStates newState)
         {
             _currentState = _states[newState];
+            _currentState.Initialize();
         }
 
         public void EmitTargetReached(Vector3 target)

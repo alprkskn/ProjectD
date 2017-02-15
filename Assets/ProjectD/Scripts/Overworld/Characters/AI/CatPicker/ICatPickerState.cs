@@ -6,9 +6,11 @@ namespace ProjectD.Overworld
 {
 	public interface ICatPickerState
 	{
+        void Initialize();
+
 		void UpdateState();
 
-		void OnTriggerEnter(Collider other);
+		void OnTriggerEnter2D(Collider2D other);
 
 		void ToCatIdleState();
 

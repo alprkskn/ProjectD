@@ -6,7 +6,6 @@ namespace ProjectD.Overworld
 {
 	public class CatPickerGameManager : MonoBehaviour
 	{
-		private Player _player;
 		private Pathfinder2D _pathfinder;
         private LevelLoader _levelLoader;
 
@@ -18,6 +17,12 @@ namespace ProjectD.Overworld
 		private GameObject[] _catPrefabs;
         private Transform _agentsParent;
         private Coroutine _catSpawner;
+
+		private Player _player;
+        public Player Player
+        {
+            get { return _player; }
+        }
 
 
         // TODO: initialize players, targetItems, UI, pathfinder. Whatever is needed when
@@ -115,13 +120,13 @@ namespace ProjectD.Overworld
 
                     var csp = cat.GetComponent<CatStatePattern>();
                     csp.LostTarget += OnCatLoseTarget;
+                    csp.SetManager(this);
                     csp.CatEntity.PickedUpEvent += OnCatPickedUp;
                     _cats.Add(csp);
                     SetCatTarget(csp);
 
                     cat.name = cat.name.Replace("(Clone)", "_" + Random.Range(0, 1000).ToString());
 
-                    Debug.Log("Spawned a cat!");
                     yield return new WaitForSeconds(Random.Range(1, 3f));
                 }
                 else
@@ -152,13 +157,11 @@ namespace ProjectD.Overworld
 
             cat.TargetReached += OnCatReachedTarget;
 
-            Debug.Log("Set target for cat: " + t.name);
 		}
 
         private void OnCatReachedTarget(Pathfinding2D arg1, Vector3 arg2)
         {
             var go = arg1.gameObject;
-            Debug.LogFormat("{0} reached its target.", go.name);
 
             // TODO: Normally this goes into the Target reached state.
             // For now we just remove the agents from the scene.

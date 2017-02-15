@@ -9,19 +9,27 @@ namespace ProjectD.Overworld
 	public class CatChaseState : ICatPickerState
 	{
 		private readonly CatStatePattern _ownerStatePattern;
+		private readonly CatPickerGameManager _gameManager;
 
         private Vector3? _chaseTarget;
         private Vector3? _subTarget;
         private bool _onActualTarget;
 
-		public CatChaseState(CatStatePattern cat)
+		public CatChaseState(CatStatePattern cat, CatPickerGameManager manager)
 		{
             _ownerStatePattern = cat;
+            _gameManager = manager;
 		}
 
-		public void OnTriggerEnter(Collider other)
+		public void OnTriggerEnter2D(Collider2D other)
 		{
-			throw new NotImplementedException();
+            if(other.gameObject.layer == LayerMask.NameToLayer("Player"))
+            {
+                // To alert state.
+                _ownerStatePattern.NavigationAgent.TargetReached -= SubTargetCallback;
+                _ownerStatePattern.NavigationAgent.TargetReached -= ActualTargetCallback;
+                ToCatAvoidState();
+            }
 		}
 
 		public void ToCatReachTargetState()
@@ -52,7 +60,6 @@ namespace ProjectD.Overworld
                 _chaseTarget = _ownerStatePattern.ChaseTarget;
                 SubTargetCallback(_ownerStatePattern.NavigationAgent, _ownerStatePattern.transform.position);
                 //_ownerStatePattern.NavigationAgent.TargetReached +=  FindPath(_ownerStatePattern.transform.position, _chaseTarget.Value);
-                Debug.LogFormat("{0} is headed to {1}.", _ownerStatePattern.name, _chaseTarget);
             }
 
 		}
@@ -106,7 +113,14 @@ namespace ProjectD.Overworld
 
 		public void ToCatAvoidState()
 		{
-			throw new NotImplementedException();
+            _ownerStatePattern.ChangeState(CatStatePattern.CatStates.Avoid);
 		}
-	}
+
+        public void Initialize()
+        {
+            _chaseTarget = null;
+            _ownerStatePattern.NavigationAgent.SpeedFactor = 1f;
+            Debug.Log("Into Chase State.");
+        }
+    }
 }

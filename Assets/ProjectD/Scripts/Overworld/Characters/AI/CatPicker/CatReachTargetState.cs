@@ -7,14 +7,16 @@ namespace ProjectD.Overworld
 {
 	public class CatReachTargetState : ICatPickerState
 	{
-		private readonly CatStatePattern ownerStatePattern;
+		private readonly CatStatePattern _ownerStatePattern;
+		private readonly CatPickerGameManager _gameManager;
 
-		public CatReachTargetState(CatStatePattern cat)
+		public CatReachTargetState(CatStatePattern cat, CatPickerGameManager manager)
 		{
-
+            _ownerStatePattern = cat;
+            _gameManager = manager;
 		}
 
-		public void OnTriggerEnter(Collider other)
+		public void OnTriggerEnter2D(Collider2D other)
 		{
 			throw new NotImplementedException();
 		}
@@ -43,5 +45,9 @@ namespace ProjectD.Overworld
 		{
 			throw new NotImplementedException();
 		}
-	}
+
+        public void Initialize()
+        {
+        }
+    }
 }

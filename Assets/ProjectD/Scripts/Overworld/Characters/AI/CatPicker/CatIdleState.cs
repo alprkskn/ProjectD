@@ -8,15 +8,17 @@ namespace ProjectD.Overworld
 	public class CatIdleState : ICatPickerState
 	{
 		private readonly CatStatePattern _ownerStatePattern;
+		private readonly CatPickerGameManager _gameManager;
 
         private Coroutine _chaseInterrupt;
 
-		public CatIdleState(CatStatePattern cat)
+		public CatIdleState(CatStatePattern cat, CatPickerGameManager manager)
 		{
             _ownerStatePattern = cat;
+            _gameManager = manager;
 		}
 
-		public void OnTriggerEnter(Collider other)
+		public void OnTriggerEnter2D(Collider2D other)
 		{
 		}
 
@@ -56,5 +58,9 @@ namespace ProjectD.Overworld
             ToCatChaseState();
             _chaseInterrupt = null;
         }
-	}
+
+        public void Initialize()
+        {
+        }
+    }
 }
