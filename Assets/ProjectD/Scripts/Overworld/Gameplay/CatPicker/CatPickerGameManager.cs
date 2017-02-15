@@ -172,9 +172,9 @@ namespace ProjectD.Overworld
 
         private void PopulateTargetItems(GameObject levelObject)
         {
-            var objs = levelObject.transform.Find("Objects");
+            var objs = levelObject.transform.Find("CatPicker/Droppables");
 
-            foreach(var bs in objs.GetComponentsInChildren<BaseSprite>())
+            foreach(var bs in objs.GetComponentsInChildren<DroppableItem>())
             {
                 _targetItems.Add(bs.gameObject);
                 _targetCatMatch.Add(bs.gameObject, new List<CatStatePattern>());

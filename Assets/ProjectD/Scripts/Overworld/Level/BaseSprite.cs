@@ -6,7 +6,9 @@ public class BaseSprite : MonoBehaviour
 {
 
     public int Levitation;
-    private SpriteRenderer _spriteRenderer;
+
+    protected Transform _transform;
+    protected SpriteRenderer _spriteRenderer;
     public SpriteRenderer SpriteRenderer
     {
         get
@@ -20,7 +22,6 @@ public class BaseSprite : MonoBehaviour
         }
     }
 
-    private Transform _transform;
 
     public void SetSortingLayer(Tiled2Unity.TiledMap map)
     {
