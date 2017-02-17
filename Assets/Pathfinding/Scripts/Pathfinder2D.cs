@@ -33,6 +33,14 @@ public class Pathfinder2D : MonoBehaviour
     private int FPS = 60;
     private int times = 0;
     private int averageFPS = 0;
+	private LayerMask _obstaclesLayerMask;
+	public LayerMask ObstaclesLayerMask
+	{
+		get
+		{
+			return _obstaclesLayerMask;
+		}
+	}
 
     int maxSearchRounds = 0;
 
@@ -125,13 +133,13 @@ public class Pathfinder2D : MonoBehaviour
 
                 float dist = 20;
 
-                int layerMask = 0;
+                _obstaclesLayerMask = 0;
                 foreach (var l in DisallowedTags)
                 {
-                    layerMask |= 1 << LayerMask.NameToLayer(l);
+                    _obstaclesLayerMask |= 1 << LayerMask.NameToLayer(l);
                 }
 
-                var col = Physics2D.OverlapPoint(new Vector2(x, y), layerMask);
+                var col = Physics2D.OverlapPoint(new Vector2(x, y), _obstaclesLayerMask);
 
                 bool free = true;
 

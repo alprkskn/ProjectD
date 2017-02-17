@@ -35,6 +35,21 @@ namespace ProjectD.Overworld
 
         private Pathfinder2D _pathfinder;
 
+		public LayerMask ObstacleLayers
+		{
+			get
+			{
+				if(_pathfinder != null)
+				{
+					return _pathfinder.ObstaclesLayerMask;
+				}
+				else
+				{
+					return 0;
+				}
+			}
+		}
+
         void Awake()
         {
             DontDestroyOnLoad(this.gameObject);

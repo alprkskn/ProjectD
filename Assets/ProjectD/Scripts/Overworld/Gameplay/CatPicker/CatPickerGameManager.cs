@@ -13,6 +13,7 @@ namespace ProjectD.Overworld
 		private List<CatStatePattern> _cats;
 		private Dictionary<GameObject, List<CatStatePattern>> _targetCatMatch;
 		private List<Vector3> _spawnPoints;
+		private List<GameObject> _obstacles;
 
 		private GameObject[] _catPrefabs;
         private Transform _agentsParent;
@@ -62,6 +63,8 @@ namespace ProjectD.Overworld
             levelLoader.RemovedAgent += OnAgentRemovedFromScene;
 
             PopulateTargetItems(level);
+			PopulateObstacleItems(level);
+
 
             StartCoroutine(GameStartRoutine());
 		}
@@ -186,6 +189,20 @@ namespace ProjectD.Overworld
             }
         }
 
+		private void PopulateObstacleItems(GameObject levelObject)
+		{
+			var objs = levelObject.transform.Find("Objects");
+
+			_obstacles = new List<GameObject>();
+
+			foreach(var t in objs.GetImmediateChildren())
+			{
+				if((_levelLoader.ObstacleLayers.value & (1 << t.gameObject.layer)) > 0)
+				{
+					_obstacles.Add(t.gameObject);
+				}
+			}
+		}
 
 		// Use this for initialization
 		void Start()
