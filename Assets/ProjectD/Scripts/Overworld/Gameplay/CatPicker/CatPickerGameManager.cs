@@ -6,14 +6,39 @@ namespace ProjectD.Overworld
 {
 	public class CatPickerGameManager : MonoBehaviour
 	{
+
+		private class Obstacle
+		{
+			GameObject _gameObject;
+			List<Vector2> _reachingPoints;
+			List<GameObject> _targetItems;
+
+			public Obstacle(GameObject go)
+			{
+				_gameObject = go;
+			}
+
+			public void SetReachingPoints(List<Vector2> rp)
+			{
+				_reachingPoints = rp;
+			}
+
+			public void SetTargetItems(List<GameObject> ti)
+			{
+				_targetItems = ti;
+			}
+		}
+
 		private Pathfinder2D _pathfinder;
         private LevelLoader _levelLoader;
 
 		private List<GameObject> _targetItems;
 		private List<CatStatePattern> _cats;
-		private Dictionary<GameObject, List<CatStatePattern>> _targetCatMatch;
 		private List<Vector3> _spawnPoints;
-		private List<GameObject> _obstacles;
+		private List<Obstacle> _obstacles;
+
+		private Dictionary<GameObject, List<CatStatePattern>> _targetCatMatch;
+
 
 		private GameObject[] _catPrefabs;
         private Transform _agentsParent;
@@ -64,7 +89,6 @@ namespace ProjectD.Overworld
 
             PopulateTargetItems(level);
 			PopulateObstacleItems(level);
-
 
             StartCoroutine(GameStartRoutine());
 		}
@@ -193,15 +217,29 @@ namespace ProjectD.Overworld
 		{
 			var objs = levelObject.transform.Find("Objects");
 
-			_obstacles = new List<GameObject>();
+			_obstacles = new List<Obstacle>();
 
 			foreach(var t in objs.GetImmediateChildren())
 			{
 				if((_levelLoader.ObstacleLayers.value & (1 << t.gameObject.layer)) > 0)
 				{
-					_obstacles.Add(t.gameObject);
+					var obs = new Obstacle(t.gameObject);
+
+					_obstacles.Add(obs);
+
+					var col = t.GetComponent<BoxCollider2D>();
+
+					RaycastHit2D[] results = new RaycastHit2D[10];
+					var res = col.Cast(Vector2.zero, results);
+					if(res > 0)
+					{
+						Debug.Log("LOL");
+					}
 				}
 			}
+
+			// TODO: Obstacles should be aware of their surroundings. Namely the reachible tiles 
+			// which can be used as jump points.
 		}
 
 		// Use this for initialization
