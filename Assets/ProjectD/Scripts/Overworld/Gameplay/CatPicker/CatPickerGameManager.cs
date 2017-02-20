@@ -230,16 +230,21 @@ namespace ProjectD.Overworld
 					var col = t.GetComponent<BoxCollider2D>();
 					var bounds = col.bounds;
 
-					//RaycastHit2D[] results = new RaycastHit2D[10];
-
 					var results = Physics2D.OverlapBoxAll(bounds.center, bounds.size, 0f);
+
+					List<GameObject> droppables = new List<GameObject>();
 
 					for (int i = 0; i < results.Length; i++)
 					{
 						var droppable = results[i].GetComponent<DroppableItem>();
-						if(results[i] != col && droppable != null)
+						if (results[i] != col && droppable != null)
+						{
 							Debug.LogFormat("{1} Overlaps with {0}", results[i].name, col.name);
+							droppables.Add(droppable.gameObject);
+						}
 					}
+
+					obs.SetTargetItems(droppables);
 				}
 			}
 
