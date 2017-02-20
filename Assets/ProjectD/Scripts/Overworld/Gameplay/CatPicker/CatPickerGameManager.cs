@@ -10,7 +10,7 @@ namespace ProjectD.Overworld
 		private class Obstacle
 		{
 			GameObject _gameObject;
-			List<Vector2[]> _reachingPoints;
+			List<Vector2> _reachingPoints;
 			List<GameObject> _targetItems;
 
 			public Obstacle(GameObject go)
@@ -18,7 +18,7 @@ namespace ProjectD.Overworld
 				_gameObject = go;
 			}
 
-			public void SetReachingPoints(List<Vector2[]> rp)
+			public void SetReachingPoints(List<Vector2> rp)
 			{
 				_reachingPoints = rp;
 			}
@@ -27,6 +27,16 @@ namespace ProjectD.Overworld
 			{
 				_targetItems = ti;
 			}
+
+            public Vector2 GetRandomReachingPoint()
+            {
+                if (_reachingPoints != null && _reachingPoints.Count > 0)
+                {
+                    return _reachingPoints[Random.Range(0, _reachingPoints.Count)];
+                }
+
+                else throw new System.Exception(string.Format("{0} does not have any reachible points.", _gameObject.name));
+            }
 		}
 
 		private Pathfinder2D _pathfinder;
@@ -38,6 +48,7 @@ namespace ProjectD.Overworld
 		private List<Obstacle> _obstacles;
 
 		private Dictionary<GameObject, List<CatStatePattern>> _targetCatMatch;
+        private Dictionary<GameObject, Obstacle> _targetObstacleMatch;
 
 
 		private GameObject[] _catPrefabs;
@@ -66,6 +77,7 @@ namespace ProjectD.Overworld
 			_targetItems = new List<GameObject>();
 			_cats = new List<CatStatePattern>();
 			_targetCatMatch = new Dictionary<GameObject, List<CatStatePattern>>();
+            _targetObstacleMatch = new Dictionary<GameObject, Obstacle>();
 
 			_catPrefabs = Resources.LoadAll<GameObject>("GameInfo/Overworld/CatPicker/CatPrefabs/");
 
@@ -180,7 +192,10 @@ namespace ProjectD.Overworld
 			//TODO: Improve the pure random with some other selection technique.
 			var t = _targetItems[Random.Range(0, _targetItems.Count)];
 			_targetCatMatch[t].Add(cat);
-			cat.SetChaseTarget(TileUtils.SnapToGrid(t.transform.position));
+
+            var p = _targetObstacleMatch[t].GetRandomReachingPoint();
+
+			cat.SetChaseTarget(TileUtils.SnapToGrid(p));
 
 			cat.TargetReached += OnCatReachedTarget;
 
@@ -224,6 +239,8 @@ namespace ProjectD.Overworld
 				if ((_levelLoader.ObstacleLayers.value & (1 << t.gameObject.layer)) > 0)
 				{
 					var obs = new Obstacle(t.gameObject);
+                    var sprite = t.GetComponent<BaseSprite>();
+                    var center = sprite.transform.position;
 
 					_obstacles.Add(obs);
 
@@ -241,16 +258,82 @@ namespace ProjectD.Overworld
 						{
 							Debug.LogFormat("{1} Overlaps with {0}", results[i].name, col.name);
 							droppables.Add(droppable.gameObject);
+                            _targetObstacleMatch.Add(droppable.gameObject, obs);
 						}
 					}
 
 					obs.SetTargetItems(droppables);
+
+
+
+                    var snapped = TileUtils.SnapToGrid(center - sprite.Bounds.extents);
+
+                    var neighbors = GetBaseNeighboringTiles(TileUtils.WorldPosToGrid(snapped), sprite.Width, sprite.Height);
+
+                    List<Vector2> baseTiles = new List<Vector2>();
+
+                    while (neighbors.MoveNext())
+                    {
+                        var c = neighbors.Current;
+                        var w = TileUtils.GridToWorldPos((int)c.x, (int)c.y);
+
+                        var overlaps = Physics2D.OverlapCircleAll(w, TileUtils.TileSize / 4f, _levelLoader.ObstacleLayers);
+
+                        if(overlaps.Length > 0)
+                        {
+                            //var go = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                            //go.transform.localScale = Vector3.one * 6f;
+
+                            //go.transform.position = TileUtils.GridToWorldPos((int)c.x, (int)c.y);
+                        }
+                        else
+                        {
+                            //var go = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                            //go.transform.localScale = Vector3.one * 6f;
+
+                            //go.transform.position = TileUtils.GridToWorldPos((int)c.x, (int)c.y);
+                            baseTiles.Add(w);
+                        }
+                    }
+
+                    obs.SetReachingPoints(baseTiles);
 				}
 			}
 
 			// TODO: Obstacles should be aware of their surroundings. Namely the reachible tiles 
 			// which can be used as jump points.
 		}
+
+        private IEnumerator<Vector2> GetNeighboringTiles(Vector2 bottomLeft, int width, int height)
+        {
+            for(int i = 0; i < width; i++)
+            {
+                yield return new Vector2(bottomLeft.x + i, bottomLeft.y - 1);
+            }
+            for(int i = 0; i < height; i++)
+            {
+                yield return new Vector2(bottomLeft.x + width, bottomLeft.y + i);
+            }
+            for(int i = 0; i < width; i++)
+            {
+                yield return new Vector2(bottomLeft.x + width - 1 - i, bottomLeft.y + height);
+            }
+            for(int i = 0; i < height; i++)
+            {
+                yield return new Vector2(bottomLeft.x - 1, bottomLeft.y + height - 1 - i);
+            }
+        }
+
+        private IEnumerator<Vector2> GetBaseNeighboringTiles(Vector2 bottomLeft, int width, int height)
+        {
+            yield return new Vector3(bottomLeft.x - 1, bottomLeft.y);
+            for(int i = 0; i < width; i++)
+            {
+                yield return new Vector2(bottomLeft.x + i, bottomLeft.y - 1);
+            }
+            yield return new Vector3(bottomLeft.x + width, bottomLeft.y);
+        }
+
 
 		// Use this for initialization
 		void Start()

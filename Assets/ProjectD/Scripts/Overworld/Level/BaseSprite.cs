@@ -2,42 +2,61 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BaseSprite : MonoBehaviour
+namespace ProjectD.Overworld
 {
-
-    public int Levitation;
-
-    protected Transform _transform;
-    protected SpriteRenderer _spriteRenderer;
-    public SpriteRenderer SpriteRenderer
+    public class BaseSprite : MonoBehaviour
     {
-        get
+
+        public int Levitation;
+
+        protected Transform _transform;
+        protected SpriteRenderer _spriteRenderer;
+
+        public Bounds Bounds { get; private set; }
+        public int Width { get; private set; } // Sprite's width in Tiles.
+        public int Height { get; private set; } // Sprite's height in Tiles.
+
+        public SpriteRenderer SpriteRenderer
         {
-            if(_spriteRenderer == null)
+            get
             {
-                _spriteRenderer = GetComponent<SpriteRenderer>();
+                if (_spriteRenderer == null)
+                {
+                    SetSpriteRenderer();
+                }
+
+                return _spriteRenderer;
             }
-
-            return _spriteRenderer;
         }
-    }
 
 
-    public void SetSortingLayer(Tiled2Unity.TiledMap map)
-    {
-        SpriteRenderer.sortingOrder = (map.MapHeightInPixels / map.TileHeight) - (int)(_transform.position.y - SpriteRenderer.bounds.extents.y) / map.TileHeight + Levitation;
-    }
+        public void SetSortingLayer(Tiled2Unity.TiledMap map)
+        {
+            SpriteRenderer.sortingOrder = (map.MapHeightInPixels / map.TileHeight) - (int)(_transform.position.y - SpriteRenderer.bounds.extents.y) / map.TileHeight + Levitation;
+        }
 
-    // Use this for initialization
-    void Awake()
-    {
-        _spriteRenderer = GetComponent<SpriteRenderer>();
-        _transform = transform;
-    }
+        // Use this for initialization
+        void Awake()
+        {
+            SetSpriteRenderer();
+            _transform = transform;
+        }
 
-    // Update is called once per frame
-    void Update()
-    {
+        private void SetSpriteRenderer()
+        {
+            _spriteRenderer = GetComponent<SpriteRenderer>();
 
+            var bnds = _spriteRenderer.bounds;
+
+            this.Bounds = bnds;
+            this.Width = (int)(bnds.size.x / TileUtils.TileSize);
+            this.Height = (int)(bnds.size.y / TileUtils.TileSize);
+        }
+
+        // Update is called once per frame
+        void Update()
+        {
+
+        }
     }
 }

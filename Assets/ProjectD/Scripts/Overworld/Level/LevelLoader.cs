@@ -418,6 +418,8 @@ namespace ProjectD.Overworld
             wp.Toggle(on);
         }
 
+        GameObject go;
+
         void Update()
         {
             if (_dynamiclevelObjects != null)
@@ -436,6 +438,19 @@ namespace ProjectD.Overworld
             {
                 _gameConf.ResetPlayerPrefs();
             }
+
+            if (go == null)
+            {
+                go = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                go.transform.localScale = Vector3.one * 6f;
+            }
+
+            //var p = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            //p.z = 0;
+            //p = new Vector3(225, 415, 0);
+            //p = TileUtils.SnapToGrid(p);
+            //go.transform.position = p;
+
         }
     }
 }
