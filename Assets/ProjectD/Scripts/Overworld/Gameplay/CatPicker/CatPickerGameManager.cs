@@ -10,7 +10,7 @@ namespace ProjectD.Overworld
 		private class Obstacle
 		{
 			GameObject _gameObject;
-			List<Vector2> _reachingPoints;
+			List<Vector2[]> _reachingPoints;
 			List<GameObject> _targetItems;
 
 			public Obstacle(GameObject go)
@@ -18,7 +18,7 @@ namespace ProjectD.Overworld
 				_gameObject = go;
 			}
 
-			public void SetReachingPoints(List<Vector2> rp)
+			public void SetReachingPoints(List<Vector2[]> rp)
 			{
 				_reachingPoints = rp;
 			}
@@ -233,7 +233,10 @@ namespace ProjectD.Overworld
 					var res = col.Cast(Vector2.zero, results);
 					if(res > 0)
 					{
-						Debug.Log("LOL");
+						for (int i = 0; i < res; i++)
+						{
+							Debug.LogFormat("Overlaps with {0}", results[i].collider.name);
+						}
 					}
 				}
 			}
