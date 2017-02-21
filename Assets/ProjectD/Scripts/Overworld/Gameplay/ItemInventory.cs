@@ -23,5 +23,10 @@ namespace ProjectD.Overworld
             var p = player.GetComponent<Player>();
             p.EmitPlayerOpenedItemInventory(this);
         }
-    }
+
+		public GameObject GetGO()
+		{
+			return this.gameObject;
+		}
+	}
 }

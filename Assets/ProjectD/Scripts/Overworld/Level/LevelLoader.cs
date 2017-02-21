@@ -19,8 +19,14 @@ namespace ProjectD.Overworld
 
 
         private GameConfiguration _gameConf;
-        private InteractionsManager _interactionsManager;
-        private EventManager _eventManager;
+
+		private InteractionsManager _interactionsManager;
+		public InteractionsManager InteractionsManager
+		{
+			get { return _interactionsManager; }
+		}
+
+		private EventManager _eventManager;
         private QuestManager _questManager;
 
         private Dictionary<string, GameObject> _levels;
@@ -358,7 +364,6 @@ namespace ProjectD.Overworld
                 if (trigConf != null)
                 {
                     var lines = trigConf.text.Split('\n').Select(x => x.Replace("\r", "")).ToArray();
-                    var t = Type.GetType("ProjectD.Overworld.TileEnterTrigger");
                     var trigObject = Type.GetType("ProjectD.Overworld." + lines[0]).GetMethod("Create").Invoke(null, new object[] { lines }) as Trigger;
                     if (trigObject != null)
                     {

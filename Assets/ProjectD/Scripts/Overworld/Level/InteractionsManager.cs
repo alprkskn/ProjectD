@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -7,6 +8,8 @@ namespace ProjectD.Overworld
 {
     public class InteractionsManager : MonoBehaviour
     {
+		public event Action<Player, IInteractive> PlayerInteracts = delegate { };
+
         private Player _playerScript;
         private LevelLoader _levelLoader;
 
@@ -59,7 +62,9 @@ namespace ProjectD.Overworld
         {
             if (_reachibleObjects.Count > 0)
             {
-                _reachibleObjects.Last().Interact(_playerScript.gameObject);
+				var i = _reachibleObjects.Last();
+                i.Interact(_playerScript.gameObject);
+				PlayerInteracts.Invoke(_playerScript, i);
             }
         }
 

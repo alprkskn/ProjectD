@@ -9,7 +9,12 @@ namespace ProjectD.Overworld
     {
         public event Action<CatPickerCat> PickedUpEvent = delegate { };
 
-        public void Highlight(bool on)
+		public GameObject GetGO()
+		{
+			return this.gameObject;
+		}
+
+		public void Highlight(bool on)
         {
             var sr = GetComponent<SpriteRenderer>();
             sr.color = (on) ? Color.green : Color.white;

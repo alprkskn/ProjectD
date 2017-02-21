@@ -6,14 +6,21 @@ namespace ProjectD.Overworld
 {
     public class PlayerInteractionTrigger : Trigger
     {
-        public void Initialize(Player player)
+		private InteractionsManager _interactionsManager;
+		private GameObject _gameObject;
+
+        public void Initialize(InteractionsManager interactionsManager)
         {
-            player.PlayerInteracts += OnPlayerInteracts;
+			_interactionsManager = interactionsManager;
+            _interactionsManager.PlayerInteracts += OnPlayerInteracts;
         }
 
-        private void OnPlayerInteracts()
+        private void OnPlayerInteracts(Player player, IInteractive obj)
         {
-            Fire();
+			if (obj.GetGO() == _gameObject)
+			{
+				Fire();
+			}
         }
 
         public new static PlayerInteractionTrigger Create(string[] lines)
@@ -27,19 +34,19 @@ namespace ProjectD.Overworld
             }
             else
             {
-
                 var trig = targetGO.AddComponent<PlayerInteractionTrigger>();
+				trig._gameObject = targetGO;
                 trig.TriggerID = lines[2];
 
-                var player = GameObject.Find("Player").GetComponent<Player>();
+                var levelLoader = GameObject.Find("LevelController").GetComponent<LevelLoader>();
 
-                if (player == null)
+                if (levelLoader == null)
                 {
                     Debug.LogError("Could not find the player in the scene.");
                     return null;
                 }
 
-                trig.Initialize(player);
+                trig.Initialize(levelLoader.InteractionsManager);
 
                 return trig;
             }
