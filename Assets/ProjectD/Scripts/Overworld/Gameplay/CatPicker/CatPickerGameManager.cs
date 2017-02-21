@@ -11,6 +11,7 @@ namespace ProjectD.Overworld
 		{
 			GameObject _gameObject;
 			List<Vector2> _reachingPoints;
+			List<Vector2> _topLayerTiles;
 			List<GameObject> _targetItems;
 
 			public Obstacle(GameObject go)
@@ -26,6 +27,11 @@ namespace ProjectD.Overworld
 			public void SetTargetItems(List<GameObject> ti)
 			{
 				_targetItems = ti;
+			}
+
+			public void SetTopLayerTiles(List<Vector2> tlt)
+			{
+				_topLayerTiles = tlt;
 			}
 
             public Vector2 GetRandomReachingPoint()
@@ -261,42 +267,34 @@ namespace ProjectD.Overworld
                             _targetObstacleMatch.Add(droppable.gameObject, obs);
 						}
 					}
-
 					obs.SetTargetItems(droppables);
 
-
-
-                    var snapped = TileUtils.SnapToGrid(center - sprite.Bounds.extents);
-
-                    var neighbors = GetBaseNeighboringTiles(TileUtils.WorldPosToGrid(snapped), sprite.Width, sprite.Height);
-
+                    var snappedBottomLeft = TileUtils.SnapToGrid(center - sprite.Bounds.extents);
+                    var neighbors = GetBaseNeighboringTiles(TileUtils.WorldPosToGrid(snappedBottomLeft), sprite.Width, sprite.Height);
                     List<Vector2> baseTiles = new List<Vector2>();
-
                     while (neighbors.MoveNext())
                     {
                         var c = neighbors.Current;
                         var w = TileUtils.GridToWorldPos((int)c.x, (int)c.y);
-
                         var overlaps = Physics2D.OverlapCircleAll(w, TileUtils.TileSize / 4f, _levelLoader.ObstacleLayers);
-
                         if(overlaps.Length > 0)
                         {
-                            //var go = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-                            //go.transform.localScale = Vector3.one * 6f;
-
-                            //go.transform.position = TileUtils.GridToWorldPos((int)c.x, (int)c.y);
                         }
                         else
                         {
-                            //var go = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                            //go.transform.localScale = Vector3.one * 6f;
-
-                            //go.transform.position = TileUtils.GridToWorldPos((int)c.x, (int)c.y);
                             baseTiles.Add(w);
                         }
                     }
-
                     obs.SetReachingPoints(baseTiles);
+
+					var topLayerTiles = new List<Vector2>();
+					var snappedTopLeft = TileUtils.SnapToGrid(new Vector2(center.x - sprite.Bounds.extents.x, center.y + sprite.Bounds.extents.y - 2f));
+					for(int i = 0; i < sprite.Width; i++)
+					{
+						var p = new Vector3(snappedTopLeft.x + i * TileUtils.TileSize, snappedTopLeft.y, snappedTopLeft.z);
+						topLayerTiles.Add(p);
+					}
+					obs.SetTopLayerTiles(topLayerTiles);
 				}
 			}
 
