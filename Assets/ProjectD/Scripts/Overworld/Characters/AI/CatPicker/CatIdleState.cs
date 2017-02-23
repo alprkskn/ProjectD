@@ -62,5 +62,15 @@ namespace ProjectD.Overworld
         public void Initialize()
         {
         }
-    }
+
+		public void ToCatJumpOverObstacleState()
+		{
+			throw new NotImplementedException();
+		}
+
+		public void ToCatMoveOverObstacleState()
+		{
+			throw new NotImplementedException();
+		}
+	}
 }

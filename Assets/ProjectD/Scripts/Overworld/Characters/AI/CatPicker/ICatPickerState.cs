@@ -19,5 +19,9 @@ namespace ProjectD.Overworld
 		void ToCatChaseState();
 
 		void ToCatAvoidState();
+
+		void ToCatJumpOverObstacleState();
+
+		void ToCatMoveOverObstacleState();
 	}
 }

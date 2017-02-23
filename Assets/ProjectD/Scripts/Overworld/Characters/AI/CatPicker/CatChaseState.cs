@@ -122,5 +122,15 @@ namespace ProjectD.Overworld
             _ownerStatePattern.NavigationAgent.SpeedFactor = 1f;
             Debug.Log("Into Chase State.");
         }
-    }
+
+		public void ToCatJumpOverObstacleState()
+		{
+			throw new NotImplementedException();
+		}
+
+		public void ToCatMoveOverObstacleState()
+		{
+			throw new NotImplementedException();
+		}
+	}
 }

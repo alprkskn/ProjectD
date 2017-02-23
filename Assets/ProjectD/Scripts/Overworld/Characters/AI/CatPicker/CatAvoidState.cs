@@ -72,5 +72,15 @@ namespace ProjectD.Overworld
             _ownerStatePattern.NavigationAgent.SpeedFactor = 2f;
             Debug.Log("Into avoid state.");
         }
-    }
+
+		public void ToCatJumpOverObstacleState()
+		{
+			throw new NotImplementedException();
+		}
+
+		public void ToCatMoveOverObstacleState()
+		{
+			throw new NotImplementedException();
+		}
+	}
 }
