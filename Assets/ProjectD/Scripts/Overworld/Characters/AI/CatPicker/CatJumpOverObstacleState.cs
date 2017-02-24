@@ -56,7 +56,7 @@ namespace ProjectD.Overworld
 		private IEnumerator ControlJumpAnimation()
 		{
 			_ownerStatePattern.transform.position = _jumpPos;
-			_ownerStatePattern.StayIdle = true;
+			_ownerStatePattern.OnObstacle = true;
 			ToCatIdleState();
 			yield return null;
 		}

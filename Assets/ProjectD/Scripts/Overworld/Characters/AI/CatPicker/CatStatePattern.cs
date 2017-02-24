@@ -16,6 +16,7 @@ namespace ProjectD.Overworld
 
 		public event Action<CatStatePattern, GameObject> LostTarget; // Thrown when the target for the cat is lost for some reason.
         public event Action<Pathfinding2D, Vector3> TargetReached = delegate { };
+		public event Action<GameObject, CatStatePattern> TargetKnockedDown = delegate { };
 
 		private Vector3? _chaseTarget;
         public Vector3? ChaseTarget
@@ -35,7 +36,7 @@ namespace ProjectD.Overworld
 			}
 		}
 
-		public bool StayIdle = false;
+		public bool OnObstacle = false;
 
 		private CircleCollider2D _alertCollider;
 
@@ -121,5 +122,10 @@ namespace ProjectD.Overworld
         {
             TargetReached.Invoke(this._navigationAgent, target);
         }
+
+		public void EmitTargetKnockedDown()
+		{
+			TargetKnockedDown.Invoke(_targetObject, this);
+		}
 	}
 }

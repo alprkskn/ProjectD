@@ -186,7 +186,7 @@ namespace ProjectD.Overworld
 		{
 			while (true)
 			{
-				if (_cats.Count < 3)
+				if (_cats.Count < 1)
 				{
 					var cat = Instantiate<GameObject>(_catPrefabs[Random.Range(0, _catPrefabs.Length)]);
 
@@ -237,16 +237,21 @@ namespace ProjectD.Overworld
 			cat.SetChaseTarget(TileUtils.SnapToGrid(p), t);
 
 			cat.TargetReached += OnCatReachedTarget;
+			cat.TargetKnockedDown += OnCatKnockedDownTarget;
 
+		}
+
+		private void OnCatKnockedDownTarget(GameObject arg1, CatStatePattern arg2)
+		{
+			var go = arg1.gameObject;
+			_levelLoader.RemoveAgentFromScene(go);
 		}
 
 		private void OnCatReachedTarget(Pathfinding2D arg1, Vector3 arg2)
 		{
-			var go = arg1.gameObject;
 
 			// TODO: Normally this goes into the Target reached state.
 			// For now we just remove the agents from the scene.
-			//_levelLoader.RemoveAgentFromScene(go);
 		}
 
 		private void OnCatPickedUp(CatPickerCat obj)

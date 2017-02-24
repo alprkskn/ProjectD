@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace ProjectD.Overworld
 {
@@ -9,6 +10,8 @@ namespace ProjectD.Overworld
 	{
 		private readonly CatStatePattern _ownerStatePattern;
 		private readonly CatPickerGameManager _gameManager;
+
+		private Coroutine _pokeCoroutine;
 
 		public CatReachTargetState(CatStatePattern cat, CatPickerGameManager manager)
 		{
@@ -18,7 +21,22 @@ namespace ProjectD.Overworld
 
 		public void OnTriggerEnter2D(Collider2D other)
 		{
-			throw new NotImplementedException();
+		}
+
+		public void UpdateState()
+		{
+		}
+
+        public void Initialize()
+        {
+			_pokeCoroutine = _ownerStatePattern.StartCoroutine(PokeTarget());
+        }
+
+		private IEnumerator PokeTarget()
+		{
+			yield return new WaitForSeconds(Random.Range(1f, 3f));
+			Debug.Log("Cat knocked down target.");
+			_ownerStatePattern.EmitTargetKnockedDown();
 		}
 
 		public void ToCatReachTargetState()
@@ -36,19 +54,10 @@ namespace ProjectD.Overworld
 			throw new NotImplementedException();
 		}
 
-		public void UpdateState()
-		{
-			throw new NotImplementedException();
-		}
-
 		public void ToCatAvoidState()
 		{
 			throw new NotImplementedException();
 		}
-
-        public void Initialize()
-        {
-        }
 
 		public void ToCatJumpOverObstacleState()
 		{
