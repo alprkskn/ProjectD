@@ -1,49 +1,69 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace ProjectD.Overworld
 {
+	public class Obstacle
+	{
+		GameObject _gameObject;
+		List<Vector2> _reachingPoints;
+		List<Vector2> _topLayerTiles;
+		List<GameObject> _targetItems;
+
+		public Obstacle(GameObject go)
+		{
+			_gameObject = go;
+		}
+
+		public void SetReachingPoints(List<Vector2> rp)
+		{
+			_reachingPoints = rp;
+		}
+
+		public void SetTargetItems(List<GameObject> ti)
+		{
+			_targetItems = ti;
+		}
+
+		public void SetTopLayerTiles(List<Vector2> tlt)
+		{
+			_topLayerTiles = tlt;
+		}
+
+		public Vector2 GetRandomReachingPoint()
+		{
+			if (_reachingPoints != null && _reachingPoints.Count > 0)
+			{
+				return _reachingPoints[Random.Range(0, _reachingPoints.Count)];
+			}
+
+			else throw new System.Exception(string.Format("{0} does not have any reachible points.", _gameObject.name));
+		}
+
+		public Vector2 GetClosestTopLayerTile(Vector2 pos)
+		{
+			float min = float.MaxValue;
+			int index = 0;
+
+			for (int i = 0; i < _topLayerTiles.Count; i++)
+			{
+				var deltaX = Mathf.Abs(pos.x - _topLayerTiles[i].x);
+				if(deltaX < min)
+				{
+					min = deltaX;
+					index = i;
+				}
+			}
+
+			return _topLayerTiles[index];
+		}
+	}
+
 	public class CatPickerGameManager : MonoBehaviour
 	{
 
-		private class Obstacle
-		{
-			GameObject _gameObject;
-			List<Vector2> _reachingPoints;
-			List<Vector2> _topLayerTiles;
-			List<GameObject> _targetItems;
-
-			public Obstacle(GameObject go)
-			{
-				_gameObject = go;
-			}
-
-			public void SetReachingPoints(List<Vector2> rp)
-			{
-				_reachingPoints = rp;
-			}
-
-			public void SetTargetItems(List<GameObject> ti)
-			{
-				_targetItems = ti;
-			}
-
-			public void SetTopLayerTiles(List<Vector2> tlt)
-			{
-				_topLayerTiles = tlt;
-			}
-
-            public Vector2 GetRandomReachingPoint()
-            {
-                if (_reachingPoints != null && _reachingPoints.Count > 0)
-                {
-                    return _reachingPoints[Random.Range(0, _reachingPoints.Count)];
-                }
-
-                else throw new System.Exception(string.Format("{0} does not have any reachible points.", _gameObject.name));
-            }
-		}
 
 		private Pathfinder2D _pathfinder;
 		private LevelLoader _levelLoader;
@@ -54,7 +74,7 @@ namespace ProjectD.Overworld
 		private List<Obstacle> _obstacles;
 
 		private Dictionary<GameObject, List<CatStatePattern>> _targetCatMatch;
-        private Dictionary<GameObject, Obstacle> _targetObstacleMatch;
+		private Dictionary<GameObject, Obstacle> _targetObstacleMatch;
 
 
 		private GameObject[] _catPrefabs;
@@ -74,6 +94,19 @@ namespace ProjectD.Overworld
 		// This class will be responsible to assign the cats their targets. Track the player/cat interaction.
 		// Also keep track of the target items.
 
+
+		public Obstacle GetTargetObstacle(GameObject targetObject)
+		{
+			if (_targetObstacleMatch.ContainsKey(targetObject))
+			{
+				return _targetObstacleMatch[targetObject];
+			}
+			else
+			{
+				return null;
+			}
+		}
+
 		public void Initialize(LevelLoader levelLoader, GameObject level, Player player, Pathfinder2D pathfinder)
 		{
 			_player = player;
@@ -83,7 +116,7 @@ namespace ProjectD.Overworld
 			_targetItems = new List<GameObject>();
 			_cats = new List<CatStatePattern>();
 			_targetCatMatch = new Dictionary<GameObject, List<CatStatePattern>>();
-            _targetObstacleMatch = new Dictionary<GameObject, Obstacle>();
+			_targetObstacleMatch = new Dictionary<GameObject, Obstacle>();
 
 			_catPrefabs = Resources.LoadAll<GameObject>("GameInfo/Overworld/CatPicker/CatPrefabs/");
 
@@ -133,7 +166,7 @@ namespace ProjectD.Overworld
 
 				foreach (var cat in _targetCatMatch[obj])
 				{
-					cat.SetChaseTarget(null);
+					cat.SetChaseTarget(null, null);
 				}
 
 				_targetCatMatch.Remove(obj);
@@ -199,9 +232,9 @@ namespace ProjectD.Overworld
 			var t = _targetItems[Random.Range(0, _targetItems.Count)];
 			_targetCatMatch[t].Add(cat);
 
-            var p = _targetObstacleMatch[t].GetRandomReachingPoint();
+			var p = _targetObstacleMatch[t].GetRandomReachingPoint();
 
-			cat.SetChaseTarget(TileUtils.SnapToGrid(p));
+			cat.SetChaseTarget(TileUtils.SnapToGrid(p), t);
 
 			cat.TargetReached += OnCatReachedTarget;
 
@@ -213,7 +246,7 @@ namespace ProjectD.Overworld
 
 			// TODO: Normally this goes into the Target reached state.
 			// For now we just remove the agents from the scene.
-			_levelLoader.RemoveAgentFromScene(go);
+			//_levelLoader.RemoveAgentFromScene(go);
 		}
 
 		private void OnCatPickedUp(CatPickerCat obj)
@@ -245,8 +278,8 @@ namespace ProjectD.Overworld
 				if ((_levelLoader.ObstacleLayers.value & (1 << t.gameObject.layer)) > 0)
 				{
 					var obs = new Obstacle(t.gameObject);
-                    var sprite = t.GetComponent<BaseSprite>();
-                    var center = sprite.transform.position;
+					var sprite = t.GetComponent<BaseSprite>();
+					var center = sprite.transform.position;
 
 					_obstacles.Add(obs);
 
@@ -264,32 +297,32 @@ namespace ProjectD.Overworld
 						{
 							Debug.LogFormat("{1} Overlaps with {0}", results[i].name, col.name);
 							droppables.Add(droppable.gameObject);
-                            _targetObstacleMatch.Add(droppable.gameObject, obs);
+							_targetObstacleMatch.Add(droppable.gameObject, obs);
 						}
 					}
 					obs.SetTargetItems(droppables);
 
-                    var snappedBottomLeft = TileUtils.SnapToGrid(center - sprite.Bounds.extents);
-                    var neighbors = GetBaseNeighboringTiles(TileUtils.WorldPosToGrid(snappedBottomLeft), sprite.Width, sprite.Height);
-                    List<Vector2> baseTiles = new List<Vector2>();
-                    while (neighbors.MoveNext())
-                    {
-                        var c = neighbors.Current;
-                        var w = TileUtils.GridToWorldPos((int)c.x, (int)c.y);
-                        var overlaps = Physics2D.OverlapCircleAll(w, TileUtils.TileSize / 4f, _levelLoader.ObstacleLayers);
-                        if(overlaps.Length > 0)
-                        {
-                        }
-                        else
-                        {
-                            baseTiles.Add(w);
-                        }
-                    }
-                    obs.SetReachingPoints(baseTiles);
+					var snappedBottomLeft = TileUtils.SnapToGrid(center - sprite.Bounds.extents);
+					var neighbors = GetBaseNeighboringTiles(TileUtils.WorldPosToGrid(snappedBottomLeft), sprite.Width, sprite.Height);
+					List<Vector2> baseTiles = new List<Vector2>();
+					while (neighbors.MoveNext())
+					{
+						var c = neighbors.Current;
+						var w = TileUtils.GridToWorldPos((int)c.x, (int)c.y);
+						var overlaps = Physics2D.OverlapCircleAll(w, TileUtils.TileSize / 4f, _levelLoader.ObstacleLayers);
+						if (overlaps.Length > 0)
+						{
+						}
+						else
+						{
+							baseTiles.Add(w);
+						}
+					}
+					obs.SetReachingPoints(baseTiles);
 
 					var topLayerTiles = new List<Vector2>();
 					var snappedTopLeft = TileUtils.SnapToGrid(new Vector2(center.x - sprite.Bounds.extents.x, center.y + sprite.Bounds.extents.y - 2f));
-					for(int i = 0; i < sprite.Width; i++)
+					for (int i = 0; i < sprite.Width; i++)
 					{
 						var p = new Vector3(snappedTopLeft.x + i * TileUtils.TileSize, snappedTopLeft.y, snappedTopLeft.z);
 						topLayerTiles.Add(p);
@@ -302,35 +335,35 @@ namespace ProjectD.Overworld
 			// which can be used as jump points.
 		}
 
-        private IEnumerator<Vector2> GetNeighboringTiles(Vector2 bottomLeft, int width, int height)
-        {
-            for(int i = 0; i < width; i++)
-            {
-                yield return new Vector2(bottomLeft.x + i, bottomLeft.y - 1);
-            }
-            for(int i = 0; i < height; i++)
-            {
-                yield return new Vector2(bottomLeft.x + width, bottomLeft.y + i);
-            }
-            for(int i = 0; i < width; i++)
-            {
-                yield return new Vector2(bottomLeft.x + width - 1 - i, bottomLeft.y + height);
-            }
-            for(int i = 0; i < height; i++)
-            {
-                yield return new Vector2(bottomLeft.x - 1, bottomLeft.y + height - 1 - i);
-            }
-        }
+		private IEnumerator<Vector2> GetNeighboringTiles(Vector2 bottomLeft, int width, int height)
+		{
+			for (int i = 0; i < width; i++)
+			{
+				yield return new Vector2(bottomLeft.x + i, bottomLeft.y - 1);
+			}
+			for (int i = 0; i < height; i++)
+			{
+				yield return new Vector2(bottomLeft.x + width, bottomLeft.y + i);
+			}
+			for (int i = 0; i < width; i++)
+			{
+				yield return new Vector2(bottomLeft.x + width - 1 - i, bottomLeft.y + height);
+			}
+			for (int i = 0; i < height; i++)
+			{
+				yield return new Vector2(bottomLeft.x - 1, bottomLeft.y + height - 1 - i);
+			}
+		}
 
-        private IEnumerator<Vector2> GetBaseNeighboringTiles(Vector2 bottomLeft, int width, int height)
-        {
-            yield return new Vector3(bottomLeft.x - 1, bottomLeft.y);
-            for(int i = 0; i < width; i++)
-            {
-                yield return new Vector2(bottomLeft.x + i, bottomLeft.y - 1);
-            }
-            yield return new Vector3(bottomLeft.x + width, bottomLeft.y);
-        }
+		private IEnumerator<Vector2> GetBaseNeighboringTiles(Vector2 bottomLeft, int width, int height)
+		{
+			yield return new Vector3(bottomLeft.x - 1, bottomLeft.y);
+			for (int i = 0; i < width; i++)
+			{
+				yield return new Vector2(bottomLeft.x + i, bottomLeft.y - 1);
+			}
+			yield return new Vector3(bottomLeft.x + width, bottomLeft.y);
+		}
 
 
 		// Use this for initialization

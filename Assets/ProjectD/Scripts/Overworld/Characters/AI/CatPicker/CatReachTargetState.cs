@@ -52,7 +52,6 @@ namespace ProjectD.Overworld
 
 		public void ToCatJumpOverObstacleState()
 		{
-			throw new NotImplementedException();
 		}
 
 		public void ToCatMoveOverObstacleState()

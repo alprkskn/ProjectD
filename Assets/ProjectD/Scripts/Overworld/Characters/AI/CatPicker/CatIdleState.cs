@@ -39,7 +39,7 @@ namespace ProjectD.Overworld
 		{
             if (_ownerStatePattern.ChaseTarget != null)
             {
-                if (_chaseInterrupt == null)
+                if (_chaseInterrupt == null && !_ownerStatePattern.StayIdle)
                 {
                     _chaseInterrupt = _ownerStatePattern.StartCoroutine(InterruptForChase());                    
                 }
@@ -61,6 +61,7 @@ namespace ProjectD.Overworld
 
         public void Initialize()
         {
+			Debug.Log("Cat idle.");
         }
 
 		public void ToCatJumpOverObstacleState()

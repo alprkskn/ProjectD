@@ -10,7 +10,8 @@ namespace ProjectD.Overworld
 
         public enum CatStates
         {
-            Avoid, Chase, ReachTarget, Idle
+            Avoid, Chase, ReachTarget, Idle,
+			JumpOverObstacle, MoveOverObstacle
         }
 
 		public event Action<CatStatePattern, GameObject> LostTarget; // Thrown when the target for the cat is lost for some reason.
@@ -25,6 +26,16 @@ namespace ProjectD.Overworld
             }
         }
 
+		private GameObject _targetObject;
+		public GameObject TargetObject
+		{
+			get
+			{
+				return _targetObject;
+			}
+		}
+
+		public bool StayIdle = false;
 
 		private CircleCollider2D _alertCollider;
 
@@ -57,7 +68,9 @@ namespace ProjectD.Overworld
                 { CatStates.Avoid, new CatAvoidState(this, _gameManager) },
                 { CatStates.Chase, new CatChaseState(this, _gameManager) },
                 { CatStates.ReachTarget, new CatReachTargetState(this, _gameManager) },
-                { CatStates.Idle, new CatIdleState(this, _gameManager) }
+                { CatStates.Idle, new CatIdleState(this, _gameManager) },
+                { CatStates.JumpOverObstacle, new CatJumpOverObstacleState(this, _gameManager) },
+                { CatStates.MoveOverObstacle, new CatMoveOverObstacleState(this, _gameManager) }
             };
 
             _currentState = _states[CatStates.Idle];
@@ -92,9 +105,10 @@ namespace ProjectD.Overworld
 			base.Update();
 		}
 
-		public void SetChaseTarget(Vector3? target)
+		public void SetChaseTarget(Vector3? target, GameObject go)
 		{
 			_chaseTarget = target;
+			_targetObject = go;
 		}
 
         public void ChangeState(CatStates newState)

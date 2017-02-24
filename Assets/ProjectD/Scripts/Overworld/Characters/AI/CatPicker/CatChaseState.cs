@@ -86,6 +86,7 @@ namespace ProjectD.Overworld
             _ownerStatePattern.NavigationAgent.TargetReached -= ActualTargetCallback;
             _ownerStatePattern.EmitTargetReached(pos);
             Debug.Log("Target reached.");
+			ToCatJumpOverObstacleState();
         }
 
 
@@ -125,7 +126,8 @@ namespace ProjectD.Overworld
 
 		public void ToCatJumpOverObstacleState()
 		{
-			throw new NotImplementedException();
+			// Cat comes along the obstacle.
+			_ownerStatePattern.ChangeState(CatStatePattern.CatStates.JumpOverObstacle);
 		}
 
 		public void ToCatMoveOverObstacleState()
