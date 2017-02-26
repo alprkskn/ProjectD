@@ -16,6 +16,9 @@ namespace ProjectD.Overworld
         private Transform _transform;
         private Inventory _inventory;
 
+        private bool _isHoldingCat;
+        private CatPickerCat _heldCat;
+
         public Inventory Inventory
         {
             get
@@ -60,9 +63,51 @@ namespace ProjectD.Overworld
 
             if (Input.GetKeyDown(KeyCode.X))
             {
-                PlayerInteracts.Invoke();
+                Interact();
             }
             //dummy.transform.position = this.transform.position + (Vector3)_charController.facing * 32;
+        }
+
+        private void Interact()
+        {
+            if (!_isHoldingCat)
+            {
+                PlayerInteracts.Invoke();
+            }
+            else
+            {
+                DropCat();
+            }
+        }
+
+        public bool PickupCat(CatPickerCat cat)
+        {
+            cat.DisableCat();
+            _isHoldingCat = true;
+            _heldCat = cat;
+
+            cat.transform.SetParent(_transform);
+            cat.transform.localPosition = Vector3.zero;
+            Debug.Log("Picked Up!");
+
+            return true;
+        }
+
+        public void DropCat()
+        {
+            var dropPos = (Vector2) _transform.position + _charController.facing * TileUtils.TileSize;
+            dropPos = TileUtils.SnapToGrid(dropPos);
+
+            var agents = GameObject.Find("Agents");
+
+            _heldCat.transform.SetParent(agents.transform);
+            _heldCat.transform.position = dropPos;
+
+
+            _isHoldingCat = false;
+            _heldCat.EnableCat();
+            _heldCat.EmitDroppedEvent(dropPos);
+            _heldCat = null;
         }
     }
 }

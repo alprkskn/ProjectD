@@ -186,7 +186,7 @@ namespace ProjectD.Overworld
 		{
 			while (true)
 			{
-				if (_cats.Count < 1)
+				if (_cats.Count < 3)
 				{
 					var cat = Instantiate<GameObject>(_catPrefabs[Random.Range(0, _catPrefabs.Length)]);
 
@@ -199,8 +199,9 @@ namespace ProjectD.Overworld
 					var csp = cat.GetComponent<CatStatePattern>();
 					csp.LostTarget += OnCatLoseTarget;
 					csp.SetManager(this);
-					csp.CatEntity.PickedUpEvent += OnCatPickedUp;
-					_cats.Add(csp);
+                    csp.CatEntity.PickedUpEvent += OnCatPickedUp;
+                    csp.CatEntity.DroppedEvent += OnCatDropped; 
+                    _cats.Add(csp);
 					SetCatTarget(csp);
 
 					cat.name = cat.name.Replace("(Clone)", "_" + Random.Range(0, 1000).ToString());
@@ -214,7 +215,18 @@ namespace ProjectD.Overworld
 			}
 		}
 
-		public IEnumerator QuitGame()
+        private void OnCatDropped(CatPickerCat arg1, Vector2 arg2)
+        {
+            if(_spawnPoints.Any(x => Vector2.Distance(x, arg2) < TileUtils.TileSize))
+            {
+                // TODO: Cat successfully discarded. Score!
+                var go = arg1.gameObject;
+                _levelLoader.RemoveAgentFromScene(go);
+
+            }
+        }
+
+        public IEnumerator QuitGame()
 		{
 			_levelLoader.ToggleWarpPoints(true);
 			yield return null;
@@ -256,8 +268,6 @@ namespace ProjectD.Overworld
 
 		private void OnCatPickedUp(CatPickerCat obj)
 		{
-			var go = obj.gameObject;
-			_levelLoader.RemoveAgentFromScene(go);
 		}
 
 
