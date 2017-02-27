@@ -70,7 +70,6 @@ namespace ProjectD.Overworld
         {
             _running = false;
             _ownerStatePattern.NavigationAgent.SpeedFactor = 2f;
-            Debug.Log("Into avoid state.");
         }
 
 		public void ToCatJumpOverObstacleState()

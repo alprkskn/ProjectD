@@ -64,7 +64,6 @@ namespace ProjectD.Overworld
 
 		public void Initialize()
 		{
-			Debug.Log("Cat idle.");
 		}
 
 		public void ToCatJumpOverObstacleState()

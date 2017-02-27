@@ -88,7 +88,6 @@ namespace ProjectD.Overworld
 
             cat.transform.SetParent(_transform);
             cat.transform.localPosition = Vector3.zero;
-            Debug.Log("Picked Up!");
 
             return true;
         }
