@@ -1,7 +1,9 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace ProjectD.Overworld
 {
@@ -63,7 +65,7 @@ namespace ProjectD.Overworld
 
 	public class CatPickerGameManager : MonoBehaviour
 	{
-
+		public event Action QuitGameEvent = delegate { };
 
 		private Pathfinder2D _pathfinder;
 		private LevelLoader _levelLoader;
@@ -229,6 +231,16 @@ namespace ProjectD.Overworld
         public IEnumerator QuitGame()
 		{
 			_levelLoader.ToggleWarpPoints(true);
+
+			for(int i = _cats.Count - 1; i>=0; i--)
+			{
+				var cat = _cats[i];
+				_levelLoader.RemoveAgentFromScene(cat.gameObject);
+			}
+
+			yield return new WaitForEndOfFrame();
+
+			QuitGameEvent.Invoke();
 			yield return null;
 		}
 
@@ -255,8 +267,9 @@ namespace ProjectD.Overworld
 
 		private void OnCatKnockedDownTarget(GameObject arg1, CatStatePattern arg2)
 		{
-			var go = arg1.gameObject;
-			_levelLoader.RemoveAgentFromScene(go);
+			//var go = arg1.gameObject;
+			//_levelLoader.RemoveAgentFromScene(go);
+			StartCoroutine(QuitGame());
 		}
 
 		private void OnCatReachedTarget(Pathfinding2D arg1, Vector3 arg2)

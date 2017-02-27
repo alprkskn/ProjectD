@@ -406,9 +406,15 @@ namespace ProjectD.Overworld
 			Debug.Log("Cat picker game initialized.");
 			var cpgm = gameObject.AddComponent<CatPickerGameManager>();
 			cpgm.Initialize(this, _currentLevel.gameObject, PlayerScript, _pathfinder);
+			cpgm.QuitGameEvent += QuitCatPickerGame;
 		}
 
-        public void ToggleWarpPoints(bool on)
+		private void QuitCatPickerGame()
+		{
+			Destroy(GetComponent<CatPickerGameManager>());
+		}
+
+		public void ToggleWarpPoints(bool on)
         {
             if (_warpPoints == null) return;
             
