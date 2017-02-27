@@ -86,5 +86,8 @@ namespace ProjectD.Overworld
 			_ownerStatePattern.ChangeState(CatStatePattern.CatStates.ReachTarget);
 		}
 
-	}
+        public void AbortState()
+        {
+        }
+    }
 }

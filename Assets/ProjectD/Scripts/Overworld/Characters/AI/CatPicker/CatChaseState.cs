@@ -134,5 +134,9 @@ namespace ProjectD.Overworld
 		{
 			throw new NotImplementedException();
 		}
-	}
+
+        public void AbortState()
+        {
+        }
+    }
 }

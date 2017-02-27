@@ -12,6 +12,7 @@ namespace ProjectD.Overworld
 		private readonly CatPickerGameManager _gameManager;
 
 		private Coroutine _pokeCoroutine;
+        private bool _pokeFlag;
 
 		public CatReachTargetState(CatStatePattern cat, CatPickerGameManager manager)
 		{
@@ -34,9 +35,13 @@ namespace ProjectD.Overworld
 
 		private IEnumerator PokeTarget()
 		{
+            _pokeFlag = true;
 			yield return new WaitForSeconds(Random.Range(1f, 3f));
-			Debug.Log("Cat knocked down target.");
-			_ownerStatePattern.EmitTargetKnockedDown();
+            if (_pokeFlag)
+            {
+                Debug.Log("Cat knocked down target.");
+                _ownerStatePattern.EmitTargetKnockedDown();
+            }
 		}
 
 		public void ToCatReachTargetState()
@@ -67,5 +72,10 @@ namespace ProjectD.Overworld
 		{
 			throw new NotImplementedException();
 		}
-	}
+
+        public void AbortState()
+        {
+            _ownerStatePattern.StopCoroutine(_pokeCoroutine);
+        }
+    }
 }

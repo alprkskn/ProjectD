@@ -76,5 +76,10 @@ namespace ProjectD.Overworld
 		{
 			_ownerStatePattern.ChangeState(CatStatePattern.CatStates.MoveOverObstacle);
 		}
-	}
+
+        public void AbortState()
+        {
+            _ownerStatePattern.StopCoroutine(_chaseInterrupt);
+        }
+    }
 }

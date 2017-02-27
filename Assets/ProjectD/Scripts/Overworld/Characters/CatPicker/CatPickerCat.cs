@@ -32,6 +32,7 @@ namespace ProjectD.Overworld
         {
             PickedUpEvent.Invoke(this);
             var p = player.GetComponent<Player>();
+            _statePattern.ChangeState(CatStatePattern.CatStates.Idle);
             p.PickupCat(this);
         }
 

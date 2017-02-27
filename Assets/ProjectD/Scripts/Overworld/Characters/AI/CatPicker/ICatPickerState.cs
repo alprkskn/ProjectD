@@ -10,6 +10,8 @@ namespace ProjectD.Overworld
 
 		void UpdateState();
 
+        void AbortState();
+
 		void OnTriggerEnter2D(Collider2D other);
 
 		void ToCatIdleState();

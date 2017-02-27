@@ -95,6 +95,10 @@ namespace ProjectD.Overworld
 
 		}
 
+        void OnDisable()
+        {
+
+        }
         
 		void OnTriggerEnter2D(Collider2D other)
         {

@@ -91,5 +91,9 @@ namespace ProjectD.Overworld
 			throw new NotImplementedException();
 		}
 
-	}
+        public void AbortState()
+        {
+            _ownerStatePattern.StopCoroutine(_jumpCoroutine);
+        }
+    }
 }
