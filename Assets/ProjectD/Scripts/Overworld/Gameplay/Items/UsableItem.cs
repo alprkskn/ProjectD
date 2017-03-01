@@ -6,15 +6,12 @@ namespace ProjectD.Overworld
 {
 	public class UsableItem : BaseItem
 	{
-
-		// Use this for initialization
-		void Start()
+		public virtual void Update()
 		{
 
 		}
 
-		// Update is called once per frame
-		void Update()
+		public virtual void Use()
 		{
 
 		}
