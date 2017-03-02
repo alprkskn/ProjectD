@@ -7,6 +7,11 @@ namespace ProjectD.Overworld
 {
     public class Player : GameEntity
     {
+		enum HeldItemState
+		{
+			Empty, HeldCat, HeldItem
+		}
+
         public event Action PlayerInteracts = delegate { };
         public event Action<List<IInteractive>> PlayerReachesInteractives = delegate { };
         public event Action<ItemInventory> PlayerOpenedItemInventory = delegate { };
@@ -16,7 +21,7 @@ namespace ProjectD.Overworld
         private Transform _transform;
         private Inventory _inventory;
 
-        private bool _isHoldingCat;
+		private HeldItemState _heldItemState;
         private CatPickerCat _heldCat;
 
         public Inventory Inventory
@@ -70,20 +75,21 @@ namespace ProjectD.Overworld
 
         private void Interact()
         {
-            if (!_isHoldingCat)
-            {
-                PlayerInteracts.Invoke();
-            }
-            else
-            {
-                DropCat();
-            }
+			switch (_heldItemState)
+			{
+				case HeldItemState.HeldCat:
+					DropCat();
+					break;
+				case HeldItemState.Empty:
+					PlayerInteracts.Invoke();
+					break;
+			}
         }
 
         public bool PickupCat(CatPickerCat cat)
         {
             cat.DisableCat();
-            _isHoldingCat = true;
+			_heldItemState = HeldItemState.HeldCat;
             _heldCat = cat;
 
             cat.transform.SetParent(_transform);
@@ -103,7 +109,7 @@ namespace ProjectD.Overworld
             _heldCat.transform.position = dropPos;
 
 
-            _isHoldingCat = false;
+			_heldItemState = HeldItemState.Empty;
             _heldCat.EnableCat();
             _heldCat.EmitDroppedEvent(dropPos);
             _heldCat = null;
