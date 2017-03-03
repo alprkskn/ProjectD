@@ -6,14 +6,18 @@ namespace ProjectD.Overworld
 {
 	public class EquippableItem : UsableItem
 	{
-		public virtual void Equip()
-		{
+		protected GameObject _equippedPlayerGO = null;
 
+		public virtual void Equip(Player player)
+		{
+			player.SetHeldItem(this);
+			_equippedPlayerGO = player.gameObject;
 		}
 
-		public virtual void UnEquip()
+		public virtual void UnEquip(Player player)
 		{
-
+			player.SetHeldItem(null);
+			_equippedPlayerGO = null;
 		}
 	}
 }

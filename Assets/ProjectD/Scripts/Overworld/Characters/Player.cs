@@ -23,6 +23,7 @@ namespace ProjectD.Overworld
 
 		private HeldItemState _heldItemState;
         private CatPickerCat _heldCat;
+		private EquippableItem _heldItem;
 
         public Inventory Inventory
         {
@@ -114,5 +115,11 @@ namespace ProjectD.Overworld
             _heldCat.EmitDroppedEvent(dropPos);
             _heldCat = null;
         }
+
+		public void SetHeldItem(EquippableItem item)
+		{
+			_heldItem = item;
+			_heldItemState = (item == null) ? HeldItemState.Empty : HeldItemState.HeldItem;
+		}
     }
 }

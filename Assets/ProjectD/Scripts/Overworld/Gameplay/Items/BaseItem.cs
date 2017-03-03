@@ -6,9 +6,14 @@ namespace ProjectD.Overworld
 {
 	public class BaseItem : MonoBehaviour
 	{
+		protected BaseSprite _itemSprite;
+
+		[SerializeField]
+		protected Sprite _uiIcon;
+
 		public virtual void Start()
 		{
-
+			_itemSprite = GetComponent<BaseSprite>();
 		}
 	}
 }
