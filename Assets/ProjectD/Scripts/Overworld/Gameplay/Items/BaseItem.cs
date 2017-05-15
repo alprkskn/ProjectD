@@ -11,6 +11,11 @@ namespace ProjectD.Overworld
 		[SerializeField]
 		protected Sprite _uiIcon;
 
+		public virtual void Update()
+		{
+
+		}
+
 		public virtual void Start()
 		{
 			_itemSprite = GetComponent<BaseSprite>();
